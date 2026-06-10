@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sudosu.dev — Full Stack Studio</title>
+
+  <!-- Favicon: ~/ in sudosu colors -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23040912'/><text x='2' y='24' font-family='monospace' font-size='18' font-weight='bold'><tspan fill='%2356cffc'>~</tspan><tspan fill='%232dd4a0'>/</tspan></text></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div class="grain"></div>
+
+  <!-- ═══ MODAL ═══ -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+      <div class="modal-icon" id="modalIcon"></div>
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <p class="modal-body" id="modalBody"></p>
+      <a href="mailto:sudosudev@outlook.com" class="btn-primary modal-cta">→ &nbsp;Contact us</a>
+    </div>
+  </div>
+
+  <div class="video-lightbox" id="videoLightbox">
+    <button class="vl-close" id="vlClose" aria-label="Close">✕</button>
+    <div class="vl-frame" id="vlFrame"></div>
+  </div>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav id="navbar">
+    <div class="nav-logo">
+      <span class="logo-prompt">~/</span><span class="logo-sudo">sudo</span><span class="logo-su">su</span><span class="logo-dot">.dev</span>
+    </div>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#projects"><span class="ln">01.</span> Projects</a></li>
+      <li><a href="#stack"><span class="ln">02.</span> Stack</a></li>
+      <li><a href="#bioinformatics"><span class="ln">03.</span> Bio</a></li>
+      <li><a href="#about"><span class="ln">04.</span> About</a></li>
+      <li><a href="#contact"><span class="ln">05.</span> Contact</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <!-- Bell -->
+      <button class="nav-icon-btn" id="bellBtn" aria-label="Notifications">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span class="nav-badge">1</span>
+      </button>
+      <!-- User -->
+      <button class="nav-icon-btn" id="userBtn" aria-label="Account">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span class="nav-badge">1</span>
+      </button>
+      <!-- Theme -->
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span id="themeIcon">◐</span>
+      </button>
+      <!-- Hamburger -->
+      <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <div class="mobile-drawer" id="mobileDrawer">
+    <ul>
+      <li><a href="#projects"       class="drawer-link"><span class="ln">&lt;</span> Projects <span class="ln">/&gt;</span></a></li>
+      <li><a href="#stack"          class="drawer-link"><span class="ln">{</span> stack <span class="ln">}</span></a></li>
+      <li><a href="#bioinformatics" class="drawer-link"><span class="ln">&lt;</span> Bio <span class="ln">/&gt;</span></a></li>
+      <li><a href="#contact"        class="drawer-link"><span class="ln">#</span> contact</a></li>
+    </ul>
+  </div>
+
+  <!-- ═══ HERO ═══ -->
+  <section id="hero">
+    <div class="hero-term-bg" id="termBg" aria-hidden="true"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-accent-line"></div>
+
+    <div class="hero-split">
+      <div class="hero-left">
+        <div class="hero-badge"><span class="badge-dot"></span><span>~/available for projects</span></div>
+        <h1 class="hero-title">
+          <span class="ht-sudo">SUDO</span><span class="ht-su">SU</span>
+        </h1>
+        <div class="hero-dev" id="heroDev"></div>
+        <p class="hero-tagline">Full Stack Studio.<br>We build what others only plan.</p>
+        <div class="hero-cta">
+          <a href="#projects" class="btn-primary">&lt; View Project /&gt;</a>
+          <a href="#contact"  class="btn-ghost">Get in touch</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="code-window">
+          <div class="cw-bar">
+            <div class="cw-dots"><span class="cwd red"></span><span class="cwd yellow"></span><span class="cwd green"></span></div>
+            <span class="cw-filename">studio.ts</span>
+          </div>
+          <div class="cw-body" id="codeBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-scroll">
+      <span class="hs-line"></span>
+      <span class="hs-label">scroll</span>
+    </div>
+  </section>
+
+  <!-- ABOUT STRIP -->
+  <div class="about-strip">
+    <div class="strip-track">
+      <span class="si">⬡ Full Stack Web</span><span class="ss">///</span>
+      <span class="si">⬡ API Design</span><span class="ss">///</span>
+      <span class="si">⬡ Mobile Apps</span><span class="ss">///</span>
+      <span class="si">⬡ Cloud Infra</span><span class="ss">///</span>
+      <span class="si">⬡ AI Integration</span><span class="ss">///</span>
+      <span class="si">⬡ Bioinformatics</span><span class="ss">///</span>
+      <span class="si">⬡ Full Stack Web</span><span class="ss">///</span>
+      <span class="si">⬡ API Design</span><span class="ss">///</span>
+      <span class="si">⬡ Mobile Apps</span><span class="ss">///</span>
+      <span class="si">⬡ Cloud Infra</span><span class="ss">///</span>
+    </div>
+  </div>
+
+  <!-- ═══ PROJECTS ═══ -->
+  <section id="projects" class="section">
+   
+    <div class="section-label reveal">
+      <span class="sl-n">01</span><span class="sl-line"></span>
+      <span class="sl-t">&lt; projects /&gt;</span>
+    </div>
+
+     <div class="prow reveal">
+      <div class="prow-info">
+        <div class="prow-idx">01</div>
+        <h3 class="prow-title">Krokee</h3>
+        <div class="prow-tags">
+          <span class="ptag">community</span>
+          <span class="ptag">art</span>
+          <span class="ptag">social</span>
+        </div>
+        <p class="prow-desc">A collaborative web application designed for artists to share their artwork and receive highly structured, real-time visual feedback and annotations.</p>
+        <ul class="prow-pts">
+          <li>Precise, layer-based annotation system directly on the canvas</li>
+          <li>Expert feedback focusing on anatomy, perspective, and color theory</li>
+          <li>Containerized microservices architecture for seamless deployments</li>
+          <li>Secure gallery management and customized user profile dashboards</li>
+        </ul>
+        <div class="prow-stack">
+          <span class="badge sky">React</span>
+          <span class="badge emerald">Flask (Python)</span>
+          <span class="badge teal">MongoDB</span>
+          <span class="badge blue">Docker</span>
+          <span class="badge sky">Nginx</span>
+        </div>
+      </div>
+
+      <div class="prow-visual">
+        <div class="mockup-screen">
+          <div class="ms-bar"><span class="msd"></span><span class="msd"></span><span class="msd"></span><span class="ms-url">mykrokee.com</span></div>
+          <div class="ms-body shot-body">
+            <div class="ms-shot">
+              <span class="shot-ph">screenshot → /assets/krokee.png</span>
+              <img src="assets/krokee-logo-1200x630.png" alt="Krokee — annotation canvas" loading="lazy" onerror="this.remove()">
+            </div>
+          </div>
+        </div>
+        <div class="prow-actions">
+          <a class="btn-site" href="https://mykrokee.com" target="_blank" rel="noopener">
+            <span class="bs-icon">↗</span><span>Visit site</span>
+          </a>
+          <button class="video-play-btn" data-video="assets/krokee-audio.mp4">
+            <span class="vp-icon">▶</span><span class="vp-label">Watch demo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="prow reverse reveal">
+      <div class="prow-info">
+        <div class="prow-idx">02</div>
+        <h3 class="prow-title">Tataphone</h3>
+        <div class="prow-tags">
+          <span class="ptag">ecommerce</span>
+          <span class="ptag">tech</span>
+          <span class="ptag">retail</span>
+        </div>
+        <p class="prow-desc">A high-performance e-commerce platform custom-built for selling smartphones and connected smart accessories.</p>
+        <ul class="prow-pts">
+          <li>Seamless integration of PayPlus API for secure localized payment gateway</li>
+          <li>Dynamic product catalog equipped with advanced multi-criteria filtering</li>
+          <li>Frictionless shopping cart and highly optimized checkout user experience</li>
+          <li>Back-office dashboard for inventory tracking and sales metrics analytics</li>
+        </ul>
+        <div class="prow-stack">
+          <span class="badge sky">React</span>
+          <span class="badge emerald">Flask</span>
+          <span class="badge teal">PayPlus API</span>
+          <span class="badge blue">PostgreSQL</span>
+          <span class="badge sky">Nginx</span>
+        </div>
+      </div>
+      <div class="prow-visual">
+        <div class="mockup-screen">
+          <div class="ms-bar"><span class="msd"></span><span class="msd"></span><span class="msd"></span><span class="ms-url">tataphone.co.il</span></div>
+          <div class="ms-body shot-body">
+            <div class="ms-shot">
+              <span class="shot-ph">screenshot → /assets/tataphone.png</span>
+              <img src="assets/tataphone.png" alt="Tataphone — storefront" loading="lazy" onerror="this.remove()">
+            </div>
+          </div>
+        </div>
+        <div class="prow-actions">
+          <a class="btn-site" href="https://dev.tataphone.co.il" target="_blank" rel="noopener">
+            <span class="bs-icon">↗</span><span>Visit site</span>
+          </a>
+          <button class="video-play-btn" data-video="assets/tataphone-audio.mp4">
+            <span class="vp-icon">▶</span><span class="vp-label">Watch demo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="prow reveal">
+      <div class="prow-info">
+        <div class="prow-idx">03</div>
+        <h3 class="prow-title">RankIt</h3>
+        <div class="prow-tags">
+          <span class="ptag">data</span>
+          <span class="ptag">analytics</span>
+          <span class="ptag">saas</span>
+        </div>
+        <p class="prow-desc">A web application built for data analysis and automated ranking, delivering fast statistical computing and beautiful KPI visualizations.</p>
+        <ul class="prow-pts">
+          <li>Customizable ranking algorithms and dynamic scoring systems</li>
+          <li>Interactive, reactive charts and comprehensive visual reports</li>
+          <li>Sleek user interface optimized for high responsiveness and performance</li>
+          <li>Seamless data exporting workflows across standard corporate formats</li>
+        </ul>
+        <div class="prow-stack">
+          <span class="badge sky">React</span>
+          <span class="badge emerald">Node.js</span>
+          <span class="badge teal">TailwindCSS</span>
+          <span class="badge blue">MongoDB</span>
+        </div>
+      </div>
+      <div class="prow-visual">
+        <div class="mockup-screen">
+          <div class="ms-bar"><span class="msd"></span><span class="msd"></span><span class="msd"></span><span class="ms-url">getrankit.com</span></div>
+          <div class="ms-body shot-body">
+            <div class="ms-shot">
+              <span class="shot-ph">screenshot → /assets/rankit.png</span>
+              <img src="assets/rankit-1200x630.png" alt="RankIt — ranking dashboard" loading="lazy" onerror="this.remove()">
+            </div>
+          </div>
+        </div>
+        <div class="prow-actions">
+          <a class="btn-site" href="https://getrankit.com" target="_blank" rel="noopener">
+            <span class="bs-icon">↗</span><span>Visit site</span>
+          </a>
+          <button class="video-play-btn" data-video="assets/rankit-audio.mp4">
+            <span class="vp-icon">▶</span><span class="vp-label">Watch demo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="prow reverse reveal">
+      <div class="prow-info">
+        <div class="prow-idx">04</div>
+        <h3 class="prow-title">AriaDNA</h3>
+        <div class="prow-tags">
+          <span class="ptag">bioinformatics</span>
+          <span class="ptag">genomics</span>
+          <span class="ptag">cloud</span>
+        </div>
+        <p class="prow-desc">An advanced bioinformatics pipeline designed for genomic data processing, high-throughput allele calling, and cgMLST/wgMLST profile extraction.</p>
+        <ul class="prow-pts">
+          <li>End-to-end workflow automation implemented via WDL (Workflow Description Language)</li>
+          <li>Rigorous containerization of cutting-edge tools (chewBBACA, BLAST, Prodigal)</li>
+          <li>Automated cluster and Minimum Spanning Tree generation using GrapeTree</li>
+          <li>Parallelized cloud-native computing architected for Terra/GCP Batch environments</li>
+        </ul>
+        <div class="prow-stack">
+          <span class="badge emerald">WDL</span>
+          <span class="badge sky">Docker</span>
+          <span class="badge teal">Python</span>
+          <span class="badge blue">Bash</span>
+          <span class="badge emerald">GCP Batch</span>
+        </div>
+      </div>
+      <div class="prow-visual">
+        <!-- No public site → terminal mockup kept. "Visit site" points to the repo;
+             change/remove if there's nothing public. -->
+        <div class="mockup-screen">
+          <div class="ms-bar"><span class="msd"></span><span class="msd"></span><span class="msd"></span><span class="ms-url">ariadna.analysis/pipeline</span></div>
+          <div class="ms-body api-layout">
+            <div class="api-row"><span class="am get" style="background: #0284c7;">RUN</span><span class="ap">chewBBACA.py AlleleCall</span><span class="as ok">SUCCESS</span></div>
+            <div class="api-row"><span class="am post" style="background: #0f766e;">BLAST</span><span class="ap">/blastn -query schema</span><span class="as ok">100%</span></div>
+            <div class="api-row"><span class="am get" style="background: #6d28d9;">TREE</span><span class="ap">GrapeTree MST Clustering</span><span class="as ok">DONE</span></div>
+            <div class="api-row"><span class="am put" style="background: #b45309;">EXPORT</span><span class="ap">results_alleles.tsv</span><span class="as ok">SAVED</span></div>
+          </div>
+        </div>
+        <div class="prow-actions">
+          <a class="btn-site" href="https://ariadna-bio.com" target="_blank" rel="noopener">
+            <span class="bs-icon">↗</span><span>Visit site</span>
+          </a>
+          <button class="video-play-btn" data-video="assets/ariadna-audio.mp4">
+            <span class="vp-icon">▶</span><span class="vp-label">Watch demo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="prow reveal">
+      <div class="prow-info">
+        <div class="prow-idx">05</div>
+        <h3 class="prow-title">Urban Boxing</h3>
+        <div class="prow-tags">
+          <span class="ptag">sports</span>
+          <span class="ptag">fitness</span>
+          <span class="ptag">business</span>
+        </div>
+        <p class="prow-desc">A highly immersive, modern showcase website engineered for a city boxing club, highlighting class schedules, coach rosters, and memberships.</p>
+        <ul class="prow-pts">
+          <li>100% Vanilla stack architecture (HTML5, CSS3, Vanilla JS) for blazing fast web vitals</li>
+          <li>Polished scroll-triggered interactive layout with fluid UI/UX state transitions</li>
+          <li>Fully responsive scheduling grid built for cross-device schedule viewing</li>
+          <li>Streamlined contact acquisition funnel and custom Google Maps integration</li>
+        </ul>
+        <div class="prow-stack">
+          <span class="badge sky">HTML5</span>
+          <span class="badge emerald">CSS3</span>
+          <span class="badge teal">JavaScript</span>
+          <span class="badge blue">Responsive Design</span>
+        </div>
+      </div>
+      <div class="prow-visual">
+        <div class="mockup-screen">
+          <div class="ms-bar"><span class="msd"></span><span class="msd"></span><span class="msd"></span><span class="ms-url">urban-boxing</span></div>
+          <div class="ms-body shot-body">
+            <div class="ms-shot">
+              <span class="shot-ph">screenshot → /assets/urban-boxing.png</span>
+              <img src="assets/urban-boxing.png" alt="Urban Boxing — showcase site" loading="lazy" onerror="this.remove()">
+            </div>
+          </div>
+        </div>
+        <div class="prow-actions">
+          <a class="btn-site" href="REPLACE_WITH_LIVE_URL" target="_blank" rel="noopener">
+            <span class="bs-icon">↗</span><span>Visit site</span>
+          </a>
+          <button class="video-play-btn" data-video="VIDEO_URL_OR_PATH">
+            <span class="vp-icon">▶</span><span class="vp-label">Watch demo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STACK ═══ -->
+  <section id="stack" class="section stack-section">
+    <div class="section-label reveal">
+      <span class="sl-n">02</span><span class="sl-line"></span>
+      <span class="sl-t">{ stack }</span>
+    </div>
+
+    <div class="stack-grid reveal">
+
+      <div class="stack-cat">
+        <div class="scat-h"><span class="sci">◈</span> Frontend</div>
+        <div class="scat-tags">
+          <span class="stag"><img src="https://cdn.simpleicons.org/react/56cffc" class="tech-icon" alt="">React.js</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/nextdotjs/ffffff" class="tech-icon" alt="">Next.js</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/typescript/56cffc" class="tech-icon" alt="">TypeScript</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/tailwindcss/2dd4a0" class="tech-icon" alt="">Tailwind</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/css/56cffc" class="tech-icon" alt="">CSS</span>
+        </div>
+      </div>
+
+      <div class="stack-cat">
+        <div class="scat-h"><span class="sci">◈</span> Backend</div>
+        <div class="scat-tags">
+          <span class="stag"><img src="https://cdn.simpleicons.org/nodedotjs/2dd4a0" class="tech-icon" alt="">Node.js</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/python/56cffc" class="tech-icon" alt="">Python</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/flask/ffffff" class="tech-icon" alt="">Flask</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/graphql/e535ab" class="tech-icon" alt="">GraphQL</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/prisma/ffffff" class="tech-icon" alt="">Prisma</span>
+        </div>
+      </div>
+
+      <div class="stack-cat">
+        <div class="scat-h"><span class="sci">◈</span> Data & Storage</div>
+        <div class="scat-tags">
+          <span class="stag"><img src="https://cdn.simpleicons.org/postgresql/56cffc" class="tech-icon" alt="">PostgreSQL</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/mongodb/2dd4a0" class="tech-icon" alt="">MongoDB</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/redis/ff4444" class="tech-icon" alt="">Redis</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/cloudinary/3448c5" class="tech-icon" alt="">Cloudinary</span>
+        </div>
+      </div>
+
+      <div class="stack-cat">
+        <div class="scat-h"><span class="sci">◈</span> Infra & Payments</div>
+        <div class="scat-tags">
+          <span class="stag"><img src="https://cdn.simpleicons.org/docker/56cffc" class="tech-icon" alt="">Docker</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/vercel/ffffff" class="tech-icon" alt="">Hosting</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/stripe/6772e5" class="tech-icon" alt="">Payments</span>
+          <span class="stag"><img src="https://cdn.simpleicons.org/githubactions/2dd4a0" class="tech-icon" alt="">CI/CD</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ BIOINFORMATICS ═══ -->
+  <section id="bioinformatics" class="section">
+    <div class="section-label reveal">
+      <span class="sl-n">03</span><span class="sl-line"></span>
+      <span class="sl-t">~/bio </span>
+    </div>
+
+    <div class="bio-layout reveal">
+      <div class="bio-intro">
+        <h2 class="bio-title">Bioinformatics<br><em>&amp; Pipelines</em></h2>
+        <p class="bio-desc">From raw sequencing data to actionable insights. We design, implement and deploy reproducible bioinformatics pipelines — on-prem or cloud-native.</p>
+        <a href="#contact" class="btn-ghost" style="align-self:flex-start;margin-top:.5rem;">Start a pipeline project →</a>
+      </div>
+
+      <div class="bio-grid">
+
+        <div class="bio-card">
+          <div class="bio-card-icon">🐍</div>
+          <div class="bio-card-body">
+            <div class="bio-card-title">Python Pipelines</div>
+            <p class="bio-card-desc">Data wrangling, statistical analysis, ML model integration. NumPy · Pandas · Biopython · Scikit-learn.</p>
+          </div>
+        </div>
+
+        <div class="bio-card">
+          <div class="bio-card-icon">$_</div>
+          <div class="bio-card-body">
+            <div class="bio-card-title">Bash & Shell</div>
+            <p class="bio-card-desc">Production-grade shell scripting, automation, HPC job orchestration (SLURM / PBS).</p>
+          </div>
+        </div>
+
+        <div class="bio-card">
+          <div class="bio-card-icon">≋</div>
+          <div class="bio-card-body">
+            <div class="bio-card-title">WDL</div>
+            <p class="bio-card-desc">Workflow Description Language for portable, reproducible pipelines on Terra / Cromwell.</p>
+          </div>
+        </div>
+
+        <div class="bio-card">
+          <div class="bio-card-icon">⟳</div>
+          <div class="bio-card-body">
+            <div class="bio-card-title">Nextflow</div>
+            <p class="bio-card-desc">Scalable dataflow pipelines — nf-core compatible, cloud-ready (AWS Batch / GCP Life Sciences).</p>
+          </div>
+        </div>
+
+        <div class="bio-card">
+          <div class="bio-card-icon">🌿</div>
+          <div class="bio-card-body">
+            <div class="bio-card-title">Terra.bio</div>
+            <p class="bio-card-desc">Workspace management, data model design, large-cohort genomics at scale on GCP.</p>
+          </div>
+        </div>
+
+        <div class="bio-card">
+          <div class="bio-card-icon">☁</div>
+          <div class="bio-card-body">
+            <div class="bio-card-title">Cloud HPC</div>
+            <p class="bio-card-desc">AWS Batch, Google Life Sciences, containerised tools (Singularity / Docker) for reproducibility.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="section-label">
+      <span class="sl-n">04</span>
+      <span class="sl-line"></span>
+      <span class="sl-t">( about )</span>
+    </div>
+
+    <div class="about-layout reveal">
+      <div class="about-text">
+        <h2 class="about-h">I like making complicated things a little <em>simpler</em>.</h2>
+
+        <p class="about-p">I specialize in pathogen detection — working with genomic data where accuracy and scale genuinely matter. Somewhere along the way I fell for the web and for programming: the craft of taking a messy, complicated problem and shaping it into something clean that simply works.</p>
+
+        <p class="about-p">What I enjoy most is finding the simple solution — the one that actually helps people solve a real problem or move their project forward. A genomics pipeline or a polished web app, it's the same goal every time: build something genuinely useful, without the friction.</p>
+
+        <div class="about-facts">
+          <span class="afact">Pathogen detection</span>
+          <span class="afact">Full-stack web</span>
+          <span class="afact">Pipelines &amp; cloud</span>
+          <span class="afact"><span class="ad"></span>Open to projects</span>
+        </div>
+      </div>
+
+      <div class="about-visual">
+        <!-- DEFAULT: on-brand code card (no photo needed) -->
+        <div class="code-window">
+          <div class="cw-bar">
+            <div class="cw-dots"><span class="cwd red"></span><span class="cwd yellow"></span><span class="cwd green"></span></div>
+            <span class="cw-filename">about.ts</span>
+          </div>
+          <div class="cw-body">
+            <span class="cl"><span class="cl-ln"> 1</span><span class="cl-cm">// sudosu.dev / about.ts</span></span>
+            <span class="cl"><span class="cl-ln"> 2</span></span>
+            <span class="cl"><span class="cl-ln"> 3</span><span class="cl-kw">const</span> <span class="cl-fn">me</span> <span class="cl-pl">= {</span></span>
+            <span class="cl"><span class="cl-ln"> 4</span>  <span class="cl-pl">role:</span>    <span class="cl-str">"full stack developer"</span><span class="cl-pl">,</span></span>
+            <span class="cl"><span class="cl-ln"> 5</span>  <span class="cl-pl">focus:</span>   <span class="cl-str">"pathogen detection"</span><span class="cl-pl">,</span></span>
+            <span class="cl"><span class="cl-ln"> 6</span>  <span class="cl-pl">loves:</span>   <span class="cl-pl">[</span><span class="cl-str">"web"</span><span class="cl-pl">,</span><span class="cl-str">"code"</span><span class="cl-pl">,</span><span class="cl-str">"clean UX"</span><span class="cl-pl">],</span></span>
+            <span class="cl"><span class="cl-ln"> 7</span>  <span class="cl-pl">motto:</span>   <span class="cl-str">"simple beats clever"</span><span class="cl-pl">,</span></span>
+            <span class="cl"><span class="cl-ln"> 8</span>  <span class="cl-pl">status:</span>  <span class="cl-str">"open to projects"</span><span class="cl-pl">,</span></span>
+            <span class="cl"><span class="cl-ln"> 9</span><span class="cl-pl">}</span></span>
+          </div>
+        </div>
+
+        <!-- PHOTO OPTION — delete the .code-window above and uncomment this:
+        <div class="about-photo">
+          <img src="assets/me.jpg" alt="Portrait — sudosu.dev" loading="lazy">
+        </div>
+        -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CONTACT ═══ -->
+  <section id="contact" class="section">
+    <div class="section-label reveal">
+      <span class="sl-n">04</span><span class="sl-line"></span>
+      <span class="sl-t"># contact</span>
+    </div>
+    <div class="contact-layout reveal">
+      <div class="contact-left">
+        <h2 class="contact-h">Let's build<br><em>something great.</em></h2>
+        <p class="contact-sub">Available for freelance missions, long-term projects & collaborations. Full Stack · Web · Mobile · API · Bioinformatics.</p>
+      </div>
+      <div class="contact-right">
+        <a href="mailto:hello@sudosu.dev" class="btn-primary pulse large">→ &nbsp;START A PROJECT</a>
+        <div class="contact-socials">
+          <a href="https://github.com/" target="_blank" class="csoc">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            GitHub
+          </a>
+          <a href="https://linkedin.com/" target="_blank" class="csoc">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </a>
+         
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="footer-logo"><span class="logo-sudo">sudo</span><span class="logo-su">su</span>.dev</span>
+    <span class="footer-c">© 2025 — crafted with ♥</span>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
