@@ -645,3 +645,18 @@ footer{
   margin-left:.55em;transition:transform .18s;
 }
 .btn-primary:hover .bp-arrow{transform:translateX(3px);}
+
+/* ── FOOTER + MUSIC ATTRIBUTIONS ─────────────────────── */
+footer{flex-direction:column;align-items:stretch;justify-content:flex-start;gap:1.3rem;}
+.footer-attrib{display:flex;flex-direction:column;gap:.55rem;}
+.fa-label{font-family:var(--font-mono);font-size:.6rem;letter-spacing:2px;color:var(--em);}
+.fa-tracks{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.45rem 1.4rem;}
+.fa-track{font-size:.62rem;line-height:1.55;color:var(--text-faint);}
+.fa-track .fa-name{color:var(--text-dim);font-style:italic;}
+.fa-track a{color:var(--text-dim);text-decoration:none;border-bottom:1px solid var(--border-hi);}
+.fa-track a:hover{color:var(--sky);border-color:var(--sky);}
+.fa-note{color:var(--text-faint);}
+.footer-bottom{
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  border-top:1px solid var(--border);padding-top:1.2rem;
+}
