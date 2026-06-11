@@ -655,7 +655,13 @@ footer{flex-direction:column;align-items:stretch;justify-content:flex-start;gap:
 }
 .fa-label{font-family:var(--font-mono);letter-spacing:1px;color:var(--text-dim);}
 .fa-track .fa-name{color:var(--text-dim);font-style:italic;}
-.fa-credits a{color:var(--text-dim);text-decoration:none;border-bottom:1px solid var(--border-hi);}
+.fa-credits a{
+  font-family:var(--font-mono);
+  font-size:inherit;          /* même taille que le texte autour */
+  color:var(--text-dim);
+  text-decoration:none;
+  border-bottom:1px solid var(--border-hi);
+}
 .fa-credits a:hover{color:var(--sky);border-color:var(--sky);}
 .footer-bottom{
   display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
