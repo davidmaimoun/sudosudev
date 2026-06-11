@@ -3,15 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sudosu.dev — Full Stack Studio</title>
-
-  <!-- Favicon: ~/ in sudosu colors -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23040912'/><text x='2' y='24' font-family='monospace' font-size='18' font-weight='bold'><tspan fill='%2356cffc'>~</tspan><tspan fill='%232dd4a0'>/</tspan></text></svg>" />
-
+ 
+  <!-- ── Primary SEO ───────────────────────────────── -->
+  <title>sudosudev — Full-Stack Web &amp; Bioinformatics Studio</title>
+  <meta name="description" content="Full-stack developer and bioinformatician specialized in pathogen detection. I build simple, useful web apps and reproducible genomics pipelines (Nextflow, WDL, cloud HPC)." />
+  <meta name="author" content="David Maimoun" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://sudosudev.com/" />
+  <meta name="theme-color" content="#040912" />
+ 
+  <!-- ── Open Graph (Facebook / LinkedIn / Slack) ──── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="sudosudev" />
+  <meta property="og:title" content="sudosudev — Full-Stack Web &amp; Bioinformatics Studio" />
+  <meta property="og:description" content="Simple, useful web apps and reproducible bioinformatics pipelines — by a developer & bioinformatician." />
+  <meta property="og:url" content="https://sudosudev.com/" />
+  <meta property="og:image" content="https://sudosudev.com/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+ 
+  <!-- ── Twitter / X ───────────────────────────────── -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="sudosudev — Full-Stack Web &amp; Bioinformatics Studio" />
+  <meta name="twitter:description" content="Simple, useful web apps and reproducible bioinformatics pipelines." />
+  <meta name="twitter:image" content="https://sudosudev.com/assets/og-image.png" />
+ 
+  <!-- ── Favicons (files live in /assets or site root) ─ -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icon-16.png" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+ 
+  <!-- ── Fonts + styles ────────────────────────────── -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+ 
+  <!-- ── Structured data (rich results) ────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "David Maimoun",
+    "url": "https://sudosudev.com",
+    "jobTitle": "Bioinformatician & Full-Stack Developer",
+    "knowsAbout": [
+      "Bioinformatics", "Pathogen detection", "Genomics pipelines",
+      "Full-stack web development", "Nextflow", "WDL", "React", "Flask", "Cloud HPC"
+    ],
+    "sameAs": ["https://github.com/davidmaimoun"]
+  }
+  </script>
 </head>
 <body>
 
@@ -41,8 +86,8 @@
 
     <ul class="nav-links" id="navLinks">
       <li><a href="#projects"><span class="ln">01.</span> Projects</a></li>
-      <li><a href="#stack"><span class="ln">02.</span> Stack</a></li>
-      <li><a href="#bioinformatics"><span class="ln">03.</span> Bio</a></li>
+      <li><a href="#bioinformatics"><span class="ln">02.</span> Bioinformatics</a></li>
+      <li><a href="#stack"><span class="ln">03.</span> Stack</a></li>
       <li><a href="#about"><span class="ln">04.</span> About</a></li>
       <li><a href="#contact"><span class="ln">05.</span> Contact</a></li>
     </ul>
@@ -198,21 +243,22 @@
         <div class="prow-tags">
           <span class="ptag">bioinformatics</span>
           <span class="ptag">genomics</span>
-          <span class="ptag">cloud</span>
+          <span class="ptag">web app</span>
         </div>
-        <p class="prow-desc">An advanced bioinformatics pipeline designed for genomic data processing, high-throughput allele calling, and cgMLST/wgMLST profile extraction.</p>
+        <p class="prow-desc">A browser-native genomic viewer for sequences, alignments, phylogenetic trees and matrices — everything runs client-side, so data never leaves the user's machine.</p>
         <ul class="prow-pts">
-          <li>End-to-end workflow automation implemented via WDL (Workflow Description Language)</li>
-          <li>Rigorous containerization of cutting-edge tools (chewBBACA, BLAST, Prodigal)</li>
-          <li>Automated cluster and Minimum Spanning Tree generation using GrapeTree</li>
-          <li>Parallelized cloud-native computing architected for Terra/GCP Batch environments</li>
+          <li>Six viewers in one workspace: sequence/GenBank, alignment, tree, matrix, Sanger and variants/BLAST</li>
+          <li>iTOL-style phylogenetic trees (NJ, UPGMA, MST, GoeBURST) with metadata coloring and pie-node grouping</li>
+          <li>Fully client-side parsing and canvas rendering — no uploads, multi-document tabs, instant load</li>
+          <li>Deployed on a custom nginx stack at ariadna-bio.com with a marketing site and in-app docs</li>
         </ul>
         <div class="prow-stack">
-          <span class="badge emerald">WDL</span>
-          <span class="badge sky">Docker</span>
-          <span class="badge teal">Python</span>
-          <span class="badge blue">Bash</span>
-          <span class="badge emerald">GCP Batch</span>
+          <span class="badge sky">React</span>
+          <span class="badge blue">Vite</span>
+          <span class="badge teal">D3.js</span>
+          <span class="badge emerald">Zustand</span>
+          <span class="badge sky">Canvas</span>
+          <span class="badge blue">Nginx</span>
         </div>
       </div>
       <div class="prow-visual">
@@ -221,7 +267,7 @@
           <div class="ms-body shot-body">
             <div class="ms-shot">
               <span class="shot-ph">screenshot → /assets/ariadna.png</span>
-              <img src="assets/ariadna.png" alt="AriaDNA — Bio Viewer" loading="lazy" onerror="this.remove()">
+              <img src="assets/ariadna.png" alt="AriaDNA — browser-native genomic viewer" loading="lazy" onerror="this.remove()">
             </div>
           </div>
         </div>
@@ -243,22 +289,24 @@
         <div class="prow-idx">03</div>
         <h3 class="prow-title">RankIt</h3>
         <div class="prow-tags">
-          <span class="ptag">data</span>
-          <span class="ptag">analytics</span>
-          <span class="ptag">saas</span>
+          <span class="ptag">forum</span>
+          <span class="ptag">community</span>
+          <span class="ptag">reviews</span>
         </div>
-        <p class="prow-desc">A web application built for data analysis and automated ranking, delivering fast statistical computing and beautiful KPI visualizations.</p>
+        <p class="prow-desc">A Reddit-style community platform where anyone can add tech products and share honest scored reviews — no sponsored bias, just real opinions from real people.</p>
         <ul class="prow-pts">
-          <li>Customizable ranking algorithms and dynamic scoring systems</li>
-          <li>Interactive, reactive charts and comprehensive visual reports</li>
-          <li>Sleek user interface optimized for high responsiveness and performance</li>
-          <li>Seamless data exporting workflows across standard corporate formats</li>
+          <li>Score-colored review cards (red → orange → blue → green) for instant visual sentiment</li>
+          <li>Per-product stats panel with average score, review count, and score distribution bar</li>
+          <li>Full review system with pros/cons tags, helpful voting, and inline editing</li>
+          <li>JWT auth, category browsing, full-text search, and paginated product listings</li>
         </ul>
         <div class="prow-stack">
           <span class="badge sky">React</span>
-          <span class="badge emerald">Node.js</span>
+          <span class="badge violet">Flask</span>
           <span class="badge teal">TailwindCSS</span>
           <span class="badge blue">MongoDB</span>
+          <span class="badge slate">Zustand</span>
+          <span class="badge sky">Nginx</span>
         </div>
       </div>
       <div class="prow-visual">
@@ -267,7 +315,7 @@
           <div class="ms-body shot-body">
             <div class="ms-shot">
               <span class="shot-ph">screenshot → /assets/rankit.png</span>
-              <img src="assets/rankit-1200x630.png" alt="RankIt — ranking dashboard" loading="lazy" onerror="this.remove()">
+              <img src="assets/rankit-1200x630.png" alt="RankIt — tech review forum" loading="lazy" onerror="this.remove()">
             </div>
           </div>
         </div>
@@ -302,7 +350,9 @@
           <span class="badge sky">React</span>
           <span class="badge emerald">Flask</span>
           <span class="badge teal">PayPlus API</span>
-          <span class="badge blue">PostgreSQL</span>
+          <span class="badge teal">TailwindCSS</span>
+          <span class="badge blue">MongoDB</span>
+          <span class="badge slate">Zustand</span>
           <span class="badge sky">Nginx</span>
         </div>
       </div>
@@ -372,10 +422,79 @@
     </div>
   </section>
 
+   <!-- ═══ BIOINFORMATICS ═══ -->
+  <section id="bioinformatics" class="section">
+    <div class="section-label reveal">
+      <span class="sl-n">02</span><span class="sl-line"></span>
+      <span class="sl-t">~/bioinformatics </span>
+    </div>
+
+    <div class="bio-layout reveal">
+      <div class="bio-intro">
+        <h2 class="bio-title">Bioinformatics<br><em>&amp; Pipelines</em></h2>
+        <p class="bio-desc">From raw sequencing data to actionable insights. We design, implement and deploy reproducible bioinformatics pipelines — on-prem or cloud-native.</p>
+        <a href="#contact" class="btn-ghost" style="align-self:flex-start;margin-top:.5rem;">Start a project →</a>
+      </div>
+
+      <div class="bio-grid">
+
+        <div class="bio-card">
+                      <span class="bio-card-icon""><img src="https://cdn.simpleicons.org/python/56cffc" class="tech-icon" alt="python"></span>
+          <div class="bio-card-body">
+            <div class="bio-card-title">Python Pipelines</div>
+            <p class="bio-card-desc">Data wrangling, statistical analysis, ML model integration. NumPy · Pandas · Biopython · Scikit-learn.</p>
+          </div>
+        </div>
+
+        <div class="bio-card">
+          <span class="bio-card-icon""><img src="assets/gnubash.svg" class="tech-icon" alt="bash"></span>
+          <div class="bio-card-body">
+            <div class="bio-card-title">Bash & Shell</div>
+            <p class="bio-card-desc">Production-grade shell scripting, automation, HPC job orchestration (SLURM / PBS).</p>
+          </div>
+        </div>
+
+        <div class="bio-card">
+          <span class="bio-card-icon""><img src="assets/wdl.svg" class="tech-icon" alt="wdl"></span>
+          <div class="bio-card-body">
+            <div class="bio-card-title">WDL</div>
+            <p class="bio-card-desc">Workflow Description Language for portable, reproducible pipelines on Terra / Cromwell.</p>
+          </div>
+        </div>
+
+        <div class="bio-card">
+            <span class="bio-card-icon""><img src="https://cdn.simpleicons.org/nextflow/56cffc" class="tech-icon" alt="nexflow"></span>
+
+          <div class="bio-card-body">
+            <div class="bio-card-title">Nextflow</div>
+            <p class="bio-card-desc">Scalable dataflow pipelines — nf-core compatible, cloud-ready (AWS Batch / GCP Life Sciences).</p>
+          </div>
+        </div>
+
+        <div class="bio-card">
+          <div class="bio-card-icon">🌿</div>
+          <div class="bio-card-body">
+            <div class="bio-card-title">Terra.bio</div>
+            <p class="bio-card-desc">Workspace management, data model design, large-cohort genomics at scale on GCP.</p>
+          </div>
+        </div>
+
+        <div class="bio-card">
+                      <span class="bio-card-icon""><img src="https://cdn.simpleicons.org/googlecloudstorage/56cffc" class="tech-icon" alt="cloud"></span>
+          <div class="bio-card-body">
+            <div class="bio-card-title">Cloud HPC</div>
+            <p class="bio-card-desc">AWS Batch, Google Life Sciences, containerised tools (Singularity / Docker) for reproducibility.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- ═══ STACK ═══ -->
   <section id="stack" class="section stack-section">
     <div class="section-label reveal">
-      <span class="sl-n">02</span><span class="sl-line"></span>
+      <span class="sl-n">03</span><span class="sl-line"></span>
       <span class="sl-t">{ stack }</span>
     </div>
 
@@ -426,73 +545,7 @@
     </div>
   </section>
 
-  <!-- ═══ BIOINFORMATICS ═══ -->
-  <section id="bioinformatics" class="section">
-    <div class="section-label reveal">
-      <span class="sl-n">03</span><span class="sl-line"></span>
-      <span class="sl-t">~/bio </span>
-    </div>
-
-    <div class="bio-layout reveal">
-      <div class="bio-intro">
-        <h2 class="bio-title">Bioinformatics<br><em>&amp; Pipelines</em></h2>
-        <p class="bio-desc">From raw sequencing data to actionable insights. We design, implement and deploy reproducible bioinformatics pipelines — on-prem or cloud-native.</p>
-        <a href="#contact" class="btn-ghost" style="align-self:flex-start;margin-top:.5rem;">Start a pipeline project →</a>
-      </div>
-
-      <div class="bio-grid">
-
-        <div class="bio-card">
-          <div class="bio-card-icon">🐍</div>
-          <div class="bio-card-body">
-            <div class="bio-card-title">Python Pipelines</div>
-            <p class="bio-card-desc">Data wrangling, statistical analysis, ML model integration. NumPy · Pandas · Biopython · Scikit-learn.</p>
-          </div>
-        </div>
-
-        <div class="bio-card">
-          <div class="bio-card-icon">$_</div>
-          <div class="bio-card-body">
-            <div class="bio-card-title">Bash & Shell</div>
-            <p class="bio-card-desc">Production-grade shell scripting, automation, HPC job orchestration (SLURM / PBS).</p>
-          </div>
-        </div>
-
-        <div class="bio-card">
-          <div class="bio-card-icon">≋</div>
-          <div class="bio-card-body">
-            <div class="bio-card-title">WDL</div>
-            <p class="bio-card-desc">Workflow Description Language for portable, reproducible pipelines on Terra / Cromwell.</p>
-          </div>
-        </div>
-
-        <div class="bio-card">
-          <div class="bio-card-icon">⟳</div>
-          <div class="bio-card-body">
-            <div class="bio-card-title">Nextflow</div>
-            <p class="bio-card-desc">Scalable dataflow pipelines — nf-core compatible, cloud-ready (AWS Batch / GCP Life Sciences).</p>
-          </div>
-        </div>
-
-        <div class="bio-card">
-          <div class="bio-card-icon">🌿</div>
-          <div class="bio-card-body">
-            <div class="bio-card-title">Terra.bio</div>
-            <p class="bio-card-desc">Workspace management, data model design, large-cohort genomics at scale on GCP.</p>
-          </div>
-        </div>
-
-        <div class="bio-card">
-          <div class="bio-card-icon">☁</div>
-          <div class="bio-card-body">
-            <div class="bio-card-title">Cloud HPC</div>
-            <p class="bio-card-desc">AWS Batch, Google Life Sciences, containerised tools (Singularity / Docker) for reproducibility.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
+ 
 
   <section class="section" id="about">
     <div class="section-label">
@@ -529,7 +582,7 @@
             <span class="cl"><span class="cl-ln"> 2</span></span>
             <span class="cl"><span class="cl-ln"> 3</span><span class="cl-kw">const</span> <span class="cl-fn">me</span> <span class="cl-pl">= {</span></span>
             <span class="cl"><span class="cl-ln"> 4</span>  <span class="cl-pl">role:</span>    <span class="cl-str">"full stack developer"</span><span class="cl-pl">,</span></span>
-            <span class="cl"><span class="cl-ln"> 5</span>  <span class="cl-pl">focus:</span>   <span class="cl-str">"pathogen detection"</span><span class="cl-pl">,</span></span>
+            <span class="cl"><span class="cl-ln"> 5</span>  <span class="cl-pl">focus:</span>   <span class="cl-str">"useful web application"</span><span class="cl-pl">,</span></span>
             <span class="cl"><span class="cl-ln"> 6</span>  <span class="cl-pl">loves:</span>   <span class="cl-pl">[</span><span class="cl-str">"web"</span><span class="cl-pl">,</span><span class="cl-str">"code"</span><span class="cl-pl">,</span><span class="cl-str">"clean UX"</span><span class="cl-pl">],</span></span>
             <span class="cl"><span class="cl-ln"> 7</span>  <span class="cl-pl">motto:</span>   <span class="cl-str">"simple beats clever"</span><span class="cl-pl">,</span></span>
             <span class="cl"><span class="cl-ln"> 8</span>  <span class="cl-pl">status:</span>  <span class="cl-str">"open to projects"</span><span class="cl-pl">,</span></span>

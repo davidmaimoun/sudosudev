@@ -660,3 +660,36 @@ footer{flex-direction:column;align-items:stretch;justify-content:flex-start;gap:
   display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
   border-top:1px solid var(--border);padding-top:1.2rem;
 }
+
+/* ── MOBILE: project action buttons on one centered row ─ */
+@media(max-width:768px){
+  .prow-actions{flex-wrap:nowrap;justify-content:center;}
+  .prow-actions .btn-site,
+  .prow-actions .video-play-btn{padding:.62rem 1rem;white-space:nowrap;}
+}
+
+/* ── BIGGER BIOINFORMATICS CARD ICONS ────────────────── */
+.bio-card-icon{font-size:1.8rem;width:auto;}      /* emoji icons (e.g. 🌿) */
+.bio-card-icon img,
+.bio-card-icon .tech-icon{width:30px;height:30px;} /* CDN + downloaded SVG icons */
+
+/* ── ABOUT FACTS — more visible ──────────────────────── */
+.about-facts{gap:.7rem;}
+.afact{
+  font-size:.68rem;color:var(--text);
+  background:rgba(86,207,252,.06);
+  border:1px solid var(--border-hi);
+  padding:.55rem 1rem;
+  transition:border-color .2s,color .2s,background .2s;
+}
+.afact:hover{border-color:var(--sky);color:var(--sky);background:rgba(86,207,252,.10);}
+/* "Open to projects" → live status accent */
+.afact:has(.ad){color:var(--em);border-color:rgba(45,212,160,.4);background:rgba(45,212,160,.08);}
+.afact:has(.ad):hover{border-color:var(--em);background:rgba(45,212,160,.13);}
+.afact .ad{animation:pulse 2s ease-in-out infinite;}
+
+/* ── DARK THEME: more readable secondary text ────────── */
+[data-theme="dark"]{
+  --text-dim:   rgba(196,226,255,0.74);  /* was .55 — paragraphs, descriptions */
+  --text-faint: rgba(155,200,238,0.40);  /* was .25 — fine print, labels */
+}
