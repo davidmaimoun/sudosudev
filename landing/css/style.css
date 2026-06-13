@@ -649,20 +649,13 @@ footer{
 /* ── FOOTER + MUSIC ATTRIBUTIONS ─────────────────────── */
 footer{flex-direction:column;align-items:stretch;justify-content:flex-start;gap:1.3rem;}
 .footer-attrib{display:flex;flex-direction:column;gap:.55rem;}
-.fa-credits{
-  display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .7rem;
-  font-size:.58rem;line-height:1.4;color:var(--text-faint);
-}
-.fa-label{font-family:var(--font-mono);letter-spacing:1px;color:var(--text-dim);}
+.fa-label{font-family:var(--font-mono);font-size:.6rem;letter-spacing:2px;color:var(--em);}
+.fa-tracks{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.45rem 1.4rem;}
+.fa-track{font-size:.62rem;line-height:1.55;color:var(--text-faint);}
 .fa-track .fa-name{color:var(--text-dim);font-style:italic;}
-.fa-credits a{
-  font-family:var(--font-mono);
-  font-size:inherit;          /* même taille que le texte autour */
-  color:var(--text-dim);
-  text-decoration:none;
-  border-bottom:1px solid var(--border-hi);
-}
-.fa-credits a:hover{color:var(--sky);border-color:var(--sky);}
+.fa-track a{color:var(--text-dim);text-decoration:none;border-bottom:1px solid var(--border-hi);}
+.fa-track a:hover{color:var(--sky);border-color:var(--sky);}
+.fa-note{color:var(--text-faint);}
 .footer-bottom{
   display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
   border-top:1px solid var(--border);padding-top:1.2rem;
@@ -710,3 +703,31 @@ footer{flex-direction:column;align-items:stretch;justify-content:flex-start;gap:
     padding:.6rem .4rem;font-size:.6rem;letter-spacing:1px;white-space:nowrap;
   }
 }
+
+/* ── NAVBAR ICONS: borderless, blend into the bar ────── */
+.nav-icon-btn,
+.theme-toggle{border-color:transparent;background:transparent;}
+.nav-icon-btn:hover,
+.theme-toggle:hover{
+  border-color:transparent;
+  background:rgba(86,207,252,.10);
+  color:var(--sky);
+}
+
+/* ── MODAL CTA (Connect button) ──────────────────────── */
+.modal-cta{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.5px;
+  color:var(--sky);text-decoration:none;
+  border:1px solid var(--border-hi);padding:.6rem 1.1rem;
+  transition:border-color .2s,background .2s,transform .12s;
+}
+.modal-cta:hover{border-color:var(--sky);background:rgba(86,207,252,.08);transform:translateY(-1px);}
+
+/* ── MODAL ACTION BUTTONS (primary + secondary) ──────── */
+.modal-actions{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;}
+/* primary = sky outline + soft tint (NOT solid blue) */
+.modal-cta{background:rgba(86,207,252,.08);border-color:var(--sky);}
+.modal-cta:hover{background:rgba(86,207,252,.16);}
+/* secondary = muted text link */
+.modal-cta.secondary{color:var(--text-dim);border-color:transparent;background:none;padding:.6rem .3rem;}
+.modal-cta.secondary:hover{color:var(--sky);background:none;border-color:transparent;transform:none;}

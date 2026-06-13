@@ -133,20 +133,21 @@ const MODAL_CONTENT = {
     title: 'You have 1 new notification',
     body: `Hey there 👋
 
-Welcome to sudosu.dev!
+Welcome to sudosudev!
 
 I'd love to hear more about your project — an idea you want to explore, a product to launch, or an API to build.
 
 You're in exactly the right place. Drop me a line and let's talk.`,
+    cta: { label: 'Get in touch →', href: '#contact' },
   },
   user: {
     icon: '👾',
-    title: 'Restricted access — but the adventure is wide open.',
-    body: `This area is reserved for the sudosu.dev team.
+    title: 'Client space',
+    body: `If you're a sudosudev client, connect to your workspace to follow your projects in real time.
 
-But if you'd like to be part of the adventure — as a client, a collaborator, or a partner — the door is wide open.
-
-We build serious things, with the right people. If you're reading this, you might just be one of them. 🚀`,
+Not in the team yet? Get in touch — the door is open. 🚀`,
+    cta:  { label: 'Connect to your workspace →', href: '/app/login' },
+    cta2: { label: 'Not a client yet? Contact', href: '#contact' },
   },
 };
 
@@ -158,15 +159,25 @@ function initModal() {
   const bodyEl   = document.getElementById('modalBody');
   if (!backdrop) return;
 
-  function openModal(type) {
+  function openModal(type){
     const d = MODAL_CONTENT[type];
-    if (!d) return;
+    if(!d) return;
     iconEl.textContent  = d.icon;
     titleEl.textContent = d.title;
     bodyEl.textContent  = d.body;
+    setCta(document.getElementById('modalCta'),  d.cta);
+    setCta(document.getElementById('modalCta2'), d.cta2);
     backdrop.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
+  function setCta(el, cfg){
+    if(!el) return;
+    if(cfg){ el.textContent = cfg.label; el.href = cfg.href; el.style.display = 'inline-flex'; }
+    else   { el.style.display = 'none'; }
+  }
+  // close the modal when a CTA is clicked (so #contact scrolls cleanly)
+  ['modalCta','modalCta2'].forEach(id =>
+    document.getElementById(id)?.addEventListener('click', closeModal));
 
   function closeModal() {
     backdrop.classList.remove('open');

@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+html, body, #root { height: 100%; }
+body {
+  background: #040912;
+  color: #ddeeff;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* reusable bits in your charte */
+@layer components {
+  .input {
+    @apply w-full bg-bg2 border border-linehi text-ink font-mono text-sm
+           px-3.5 py-2.5 outline-none transition-colors focus:border-sky;
+  }
+  .label {
+    @apply block font-mono text-[.6rem] tracking-wide text-dim mb-1.5 uppercase;
+  }
+  .btn-connect {
+    @apply w-full bg-sky text-[#040912] font-mono text-[.74rem] font-bold tracking-widest
+           py-3 cursor-pointer transition-transform animate-ctaPulse;
+    box-shadow: 3px 3px 0 #0c4a6e;
+  }
+  .btn-connect:hover { @apply -translate-x-0.5 -translate-y-0.5 animate-none; box-shadow: 5px 5px 0 #0c4a6e; }
+  .btn-connect:disabled { @apply opacity-70 cursor-default animate-none; }
+  .card { @apply bg-surface border border-line relative overflow-hidden; }
+}

@@ -68,7 +68,10 @@
       <div class="modal-icon" id="modalIcon"></div>
       <h2 class="modal-title" id="modalTitle"></h2>
       <p class="modal-body" id="modalBody"></p>
-      <a href="mailto:sudosudev@outlook.com" class="btn-primary modal-cta">→ &nbsp;Contact us</a>
+      <div class="modal-actions">
+        <a class="modal-cta" id="modalCta" href="#" style="display:none"></a>
+        <a class="modal-cta secondary" id="modalCta2" href="#" style="display:none"></a>
+      </div>
     </div>
   </div>
 
@@ -106,7 +109,6 @@
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
           <circle cx="12" cy="7" r="4"/>
         </svg>
-        <span class="nav-badge">1</span>
       </button>
       <!-- Theme -->
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
