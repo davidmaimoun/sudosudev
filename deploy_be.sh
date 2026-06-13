@@ -9,7 +9,7 @@
 #   sudo bash deploy_backend.sh --install-service   # write the systemd unit (first time)
 #
 # Tweak these if your paths/port differ:
-API_DIR="${API_DIR:-/var/www/sudosudev-api}"      # where the backend lives on the server
+API_DIR="${API_DIR:-/var/www/sudosudev/backend}"      # where the backend lives on the server
 SERVICE="${SERVICE:-sudosudev-api}"
 PORT="${PORT:-8001}"                               # 8001 to avoid clashing with Krokee (8000)
 RUN_USER="${RUN_USER:-www-data}"
