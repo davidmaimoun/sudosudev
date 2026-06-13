@@ -4,11 +4,14 @@
 
 :root { color-scheme: dark; }
 html, body, #root { height: 100%; }
+html { background: #040912; }
 body {
   background: #040912;
   color: #ddeeff;
   font-family: 'Space Grotesk', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* respect iOS notch / safe areas while keeping the bg dark */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 /* reusable bits in your charte */

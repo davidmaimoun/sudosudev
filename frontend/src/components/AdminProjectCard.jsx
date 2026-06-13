@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, LoaderCircle, Circle, Trash2, Pencil, Plus, X } from 'lucide-react'
+import { Check, LoaderCircle, Circle, Trash2, Pencil, Plus, X, StickyNote, UserRound } from 'lucide-react'
 import { useAdmin } from '../store/admin.js'
 import NotifyModal from './NotifyModal.jsx'
 
@@ -29,14 +29,21 @@ function StatusToggles({ status, onPick }) {
 function StepRow({ email, pi, si, step }) {
   const { updateStep, deleteStep } = useAdmin()
   const [editing, setEditing] = useState(false)
+  const [noteEditing, setNoteEditing] = useState(false)
   const [pending, setPending] = useState(null)   // status awaiting notify-confirmation
   const [title, setTitle] = useState(step.title)
   const [eta, setEta] = useState(step.eta || '')
+  const [note, setNote] = useState(step.note || '')
 
   async function save() {
     if (!title.trim()) return
     await updateStep(email, pi, si, { title, eta })
     setEditing(false)
+  }
+
+  async function saveNote() {
+    await updateStep(email, pi, si, { note })
+    setNoteEditing(false)
   }
 
   if (editing) {
@@ -53,17 +60,61 @@ function StepRow({ email, pi, si, step }) {
   }
 
   return (
-    <div className="flex items-center gap-3 flex-wrap group">
-      <span className="font-mono text-[.6rem] text-faint w-5 text-right">{si + 1}.</span>
-      <span className={`flex-1 min-w-[140px] text-sm ${step.status === 'todo' ? 'text-dim' : ''}`}>{step.title}</span>
-      {step.eta && <span className="font-mono text-[.58rem] text-faint">~ {step.eta}</span>}
-      <StatusToggles status={step.status} onPick={(s) => setPending(s)} />
-      <div className="flex gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
-        <button onClick={() => setEditing(true)} title="Edit"
-          className="grid place-items-center w-7 h-7 border border-line text-faint hover:text-sky hover:border-sky transition-colors"><Pencil size={12} /></button>
-        <button onClick={() => { if (confirm('Delete this step?')) deleteStep(email, pi, si) }} title="Delete"
-          className="grid place-items-center w-7 h-7 border border-line text-faint hover:text-red-400 hover:border-red-400/50 transition-colors"><Trash2 size={12} /></button>
+    <div className={step.needsClient ? 'border-l-2 border-rose-400/60 pl-2 -ml-2' : ''}>
+      <div className="flex items-center gap-3 flex-wrap group">
+        <span className="font-mono text-[.6rem] text-faint w-5 text-right">{si + 1}.</span>
+        <span className={`flex-1 min-w-[140px] text-sm ${step.status === 'todo' ? 'text-dim' : ''}`}>
+          {step.title}
+          {step.needsClient && (
+            <span className="ml-2 inline-flex items-center gap-1 font-mono text-[.5rem] tracking-wide uppercase
+                             text-rose-300 border border-rose-400/50 bg-rose-400/10 px-1.5 py-[2px] align-middle">
+              <UserRound size={9} /> action client
+            </span>
+          )}
+        </span>
+        {step.eta && <span className="font-mono text-[.58rem] text-faint">~ {step.eta}</span>}
+        <StatusToggles status={step.status} onPick={(s) => setPending(s)} />
+        <div className="flex gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
+          <button onClick={() => updateStep(email, pi, si, { needsClient: !step.needsClient })}
+            title={step.needsClient ? 'Remove client-action flag' : 'Mark as needing client action'}
+            className={`grid place-items-center w-7 h-7 border transition-colors
+              ${step.needsClient ? 'border-rose-400/60 text-rose-300' : 'border-line text-faint hover:text-rose-300 hover:border-rose-400/50'}`}>
+            <UserRound size={12} />
+          </button>
+          <button onClick={() => { setNote(step.note || ''); setNoteEditing(!noteEditing) }}
+            title={step.note ? 'Edit note' : 'Add note'}
+            className={`grid place-items-center w-7 h-7 border transition-colors
+              ${step.note ? 'border-amber/50 text-amber' : 'border-line text-faint hover:text-amber hover:border-amber/50'}`}>
+            <StickyNote size={12} />
+          </button>
+          <button onClick={() => setEditing(true)} title="Edit"
+            className="grid place-items-center w-7 h-7 border border-line text-faint hover:text-sky hover:border-sky transition-colors"><Pencil size={12} /></button>
+          <button onClick={() => { if (confirm('Delete this step?')) deleteStep(email, pi, si) }} title="Delete"
+            className="grid place-items-center w-7 h-7 border border-line text-faint hover:text-red-400 hover:border-red-400/50 transition-colors"><Trash2 size={12} /></button>
+        </div>
       </div>
+
+      {/* note editor */}
+      {noteEditing && (
+        <div className="flex items-start gap-2 mt-2 ml-8">
+          <textarea className="input flex-1 min-h-[60px] resize-y" autoFocus
+            placeholder="Note visible to the client (e.g. waiting on assets, a question, a heads-up)…"
+            value={note} onChange={(e) => setNote(e.target.value)} />
+          <div className="flex flex-col gap-1">
+            <button onClick={saveNote} className="grid place-items-center w-7 h-7 border border-em/60 text-em hover:bg-em/10"><Check size={14} /></button>
+            <button onClick={() => setNoteEditing(false)} className="grid place-items-center w-7 h-7 border border-line text-faint hover:text-dim"><X size={14} /></button>
+          </div>
+        </div>
+      )}
+
+      {/* note display (admin view) */}
+      {!noteEditing && step.note && (
+        <div className="mt-1.5 ml-8 flex items-start gap-2 text-[.78rem] text-amber/90 bg-amber/5 border-l-2 border-amber/50 px-3 py-1.5">
+          <StickyNote size={12} className="mt-0.5 shrink-0" />
+          <span className="whitespace-pre-wrap">{step.note}</span>
+        </div>
+      )}
+
       {pending && (
         <NotifyModal email={email} pi={pi} si={si} step={step} status={pending}
                      onClose={() => setPending(null)} />

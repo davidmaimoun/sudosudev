@@ -69,7 +69,7 @@ def add_step(email, pi):
     d = request.get_json(silent=True) or {}
     if not (d.get('title') or '').strip():
         return jsonify(error='title required'), 400
-    ok = Client.add_step(email, pi, d.get('title'), d.get('eta'), d.get('status', 'todo'))
+    ok = Client.add_step(email, pi, d.get('title'), d.get('eta'), d.get('status', 'todo'), d.get('note', ''), d.get('needsClient', False))
     return jsonify(ok=True) if ok else (jsonify(error='not found'), 404)
 
 
@@ -78,7 +78,7 @@ def add_step(email, pi):
 def update_step(email, pi, si):
     d = request.get_json(silent=True) or {}
     # status-only update (with optional email notification)
-    if 'status' in d and 'title' not in d and 'eta' not in d:
+    if 'status' in d and not any(k in d for k in ('title', 'eta', 'note', 'needsClient')):
         status = d.get('status')
         r = Client.set_step_status(email, pi, si, status)
         if r == 'bad_status':
@@ -95,8 +95,8 @@ def update_step(email, pi, si):
             except Exception as e:
                 print('[mail] notify failed:', e)
         return jsonify(ok=True, mailed=mailed)
-    # title/eta edit
-    r = Client.update_step(email, pi, si, d.get('title'), d.get('eta'))
+    # title / eta / note / needsClient edit
+    r = Client.update_step(email, pi, si, d.get('title'), d.get('eta'), d.get('note'), d.get('needsClient'))
     return jsonify(ok=True) if r else (jsonify(error='not found'), 404)
 
 

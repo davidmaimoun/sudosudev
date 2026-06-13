@@ -70,6 +70,8 @@ def normalize_steps(steps):
         out.append({
             'title': (s.get('title') or '').strip(),
             'eta': (s.get('eta') or '').strip(),
+            'note': (s.get('note') or '').strip(),
+            'needsClient': bool(s.get('needsClient', False)),
             'status': s.get('status') if s.get('status') in VALID_STATUS
                       else ('in_progress' if i == 0 else 'todo'),
         })
@@ -99,16 +101,19 @@ def set_step_status(email, pi, si, status):
         {'$set': {f'projects.{pi}.steps.{si}.status': status}})
     return res.matched_count
 
-def update_step(email, pi, si, title=None, eta=None):
+def update_step(email, pi, si, title=None, eta=None, note=None, needs_client=None):
     fields = {}
     if title is not None: fields[f'projects.{pi}.steps.{si}.title'] = title.strip()
     if eta   is not None: fields[f'projects.{pi}.steps.{si}.eta'] = eta.strip()
+    if note  is not None: fields[f'projects.{pi}.steps.{si}.note'] = note.strip()
+    if needs_client is not None: fields[f'projects.{pi}.steps.{si}.needsClient'] = bool(needs_client)
     if not fields: return 0
     return extensions.db.clients.update_one(
         {'email': email.lower(), 'role': 'client'}, {'$set': fields}).matched_count
 
-def add_step(email, pi, title, eta, status='todo'):
+def add_step(email, pi, title, eta, status='todo', note='', needs_client=False):
     step = {'title': (title or '').strip(), 'eta': (eta or '').strip(),
+            'note': (note or '').strip(), 'needsClient': bool(needs_client),
             'status': status if status in VALID_STATUS else 'todo'}
     return extensions.db.clients.update_one(
         {'email': email.lower(), 'role': 'client'},
