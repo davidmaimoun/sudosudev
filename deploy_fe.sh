@@ -8,7 +8,7 @@
 #   bash deploy_frontend.sh --clean   # wipe node_modules first (fixes weird build issues)
 #
 # Tweak if needed:
-FRONTEND_DIR="${FRONTEND_DIR:-/var/www/sudosu/frontend}"
+FRONTEND_DIR="${FRONTEND_DIR:-/var/www/sudosudev/frontend}"
 
 set -euo pipefail
 g="\033[0;32m"; y="\033[0;33m"; r="\033[0;31m"; n="\033[0m"
