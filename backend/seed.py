@@ -1,131 +1,79 @@
+# -*- coding: utf-8 -*-
+"""
+Seed la base 'sudosudev' : 1 admin + le client Tataphone.
+Lancer depuis backend/ :  python seed.py
+Affiche (et enregistre) le code admin + le ClientID.
+"""
+import os
 from datetime import datetime, timezone
-from werkzeug.security import generate_password_hash, check_password_hash
-from bson import ObjectId
-from bson.errors import InvalidId
+from pymongo import MongoClient
+from werkzeug.security import generate_password_hash
+from dotenv import load_dotenv
 
-from app import extensions
-from app.services.security import gen_client_id
+from app.services.security import gen_client_id   # 2 lettres + 4 chiffres, sans tiret
 
-VALID_STATUS = ('done', 'in_progress', 'todo')
+load_dotenv()
+DB_NAME = os.environ.get('DB_NAME', 'sudosudev')
+db = MongoClient(os.environ.get('MONGO_URI', 'mongodb://localhost:27017'))[DB_NAME]
 
+db.admins.delete_many({})
+db.clients.delete_many({})
+db.clients.create_index('email', unique=True)
+db.admins.create_index('email', unique=True)
 
-# ── reads ──
-def by_email(email):
-    return extensions.db.clients.find_one({'email': email.lower(), 'role': 'client'})
+# ── admin ──
+admin_code = 'sudosudevestunebombe'
+db.admins.insert_one({
+    'email': 'sudosudev@outlook.com', 'role': 'admin',
+    'codeHash': generate_password_hash(admin_code),
+    'createdAt': datetime.now(timezone.utc),
+})
 
-def by_id(uid):
-    try:
-        return extensions.db.clients.find_one({'_id': ObjectId(uid)})
-    except (InvalidId, TypeError):
-        return None
+# ── client Tataphone ──
+def step(title, status='todo', note='', needs_client=False):
+    return {'title': title, 'eta': '', 'note': note,
+            'needsClient': needs_client, 'status': status}
 
-def all_summaries():
-    out = []
-    for c in extensions.db.clients.find({'role': 'client'}).sort('name', 1):
-        projects = c.get('projects', [])
-        out.append({
-            'email': c['email'], 'name': c.get('name'),
-            'projects': len(projects),
-            'steps': sum(len(p.get('steps', [])) for p in projects),
-        })
-    return out
+client_id = gen_client_id()
+db.clients.insert_one({
+    'name': 'Sacha Sebag',
+    'email': 'sebagsacha@gmail.com',
+    'role': 'client',
+    'clientIdHash': generate_password_hash(client_id),
+    'createdAt': datetime.now(timezone.utc),
+    'projects': [
+        {
+            'name': 'Tataphone',
+            'description': "Site e-commerce vendant des produits casher (smartphones, etc.) "
+                           "et divers accessoires.",
+            'steps': [
+                step("Construire le squelette de l'app (React, Tailwind CSS et Flask)", 'done'),
+                step("Créer un design basique puis ajouter quelques photos pour meubler le site", 'done'),
+                step("Authentification + connexion Google", 'done'),
+                step("Panneau d'administration", 'done'),
+                step("Notifications par email + facturation", 'done'),
+                step("Mise en ligne sur un serveur temporaire pour les tests", 'done'),
+                step("Amélioration du design UI (commentaires, carrousel, bannières, etc.)", 'done'),
+                step("Ajout de la connexion WhatsApp", 'done',
+                     note="À vérifier : le bot via WhatsApp."),
+                step("Mise en ligne sur le serveur final", 'in_progress',
+                     note="Va sur hetzner.com → console → server, récupère l'IP, "
+                          "puis configure le DNS de tataphone.co.il et www.tataphone.co.il "
+                          "avec cette IP."),
+                step("Upload des images produits (Cloudinary)", 'todo'),
+                step("Traitement de l'Excel de Rudy — nettoyage du fichier pour l'import automatique",
+                     'todo', needs_client=True,
+                     note="C'est au client de réaliser cette étape."),
+            ],
+        },
+    ],
+})
 
-
-# ── auth ──
-def verify(email, client_id):
-    doc = by_email(email)
-    if doc and check_password_hash(doc.get('clientIdHash', ''), client_id):
-        return doc
-    return None
-
-def public(doc):
-    return {'client': {'name': doc.get('name')}, 'projects': doc.get('projects', [])}
-
-
-# ── writes ──
-def create(name, email):
-    cid = gen_client_id()
-    extensions.db.clients.insert_one({
-        'name': name, 'email': email.lower(), 'role': 'client',
-        'clientIdHash': generate_password_hash(cid),
-        'projects': [], 'createdAt': datetime.now(timezone.utc),
-    })
-    return cid
-
-def delete(email):
-    return extensions.db.clients.delete_one({'email': email.lower(), 'role': 'client'}).deleted_count
-
-def regenerate_id(email):
-    cid = gen_client_id()
-    res = extensions.db.clients.update_one(
-        {'email': email.lower(), 'role': 'client'},
-        {'$set': {'clientIdHash': generate_password_hash(cid)}})
-    return cid if res.matched_count else None
-
-
-# ── projects / steps ──
-def normalize_steps(steps):
-    out = []
-    for i, s in enumerate(steps or []):
-        out.append({
-            'title': (s.get('title') or '').strip(),
-            'eta': (s.get('eta') or '').strip(),
-            'note': (s.get('note') or '').strip(),
-            'needsClient': bool(s.get('needsClient', False)),
-            'status': s.get('status') if s.get('status') in VALID_STATUS
-                      else ('in_progress' if i == 0 else 'todo'),
-        })
-    return out
-
-def add_project(email, name, description, steps):
-    project = {'name': (name or '').strip(),
-               'description': (description or '').strip(),
-               'steps': normalize_steps(steps)}
-    return extensions.db.clients.update_one(
-        {'email': email.lower(), 'role': 'client'},
-        {'$push': {'projects': project}}).matched_count
-
-def delete_project(email, pi):
-    c = by_email(email)
-    if not c: return None
-    projects = c.get('projects', [])
-    if pi < 0 or pi >= len(projects): return None
-    projects.pop(pi)
-    extensions.db.clients.update_one({'_id': c['_id']}, {'$set': {'projects': projects}})
-    return True
-
-def set_step_status(email, pi, si, status):
-    if status not in VALID_STATUS: return 'bad_status'
-    res = extensions.db.clients.update_one(
-        {'email': email.lower(), 'role': 'client'},
-        {'$set': {f'projects.{pi}.steps.{si}.status': status}})
-    return res.matched_count
-
-def update_step(email, pi, si, title=None, eta=None, note=None, needs_client=None):
-    fields = {}
-    if title is not None: fields[f'projects.{pi}.steps.{si}.title'] = title.strip()
-    if eta   is not None: fields[f'projects.{pi}.steps.{si}.eta'] = eta.strip()
-    if note  is not None: fields[f'projects.{pi}.steps.{si}.note'] = note.strip()
-    if needs_client is not None: fields[f'projects.{pi}.steps.{si}.needsClient'] = bool(needs_client)
-    if not fields: return 0
-    return extensions.db.clients.update_one(
-        {'email': email.lower(), 'role': 'client'}, {'$set': fields}).matched_count
-
-def add_step(email, pi, title, eta, status='todo', note='', needs_client=False):
-    step = {'title': (title or '').strip(), 'eta': (eta or '').strip(),
-            'note': (note or '').strip(), 'needsClient': bool(needs_client),
-            'status': status if status in VALID_STATUS else 'todo'}
-    return extensions.db.clients.update_one(
-        {'email': email.lower(), 'role': 'client'},
-        {'$push': {f'projects.{pi}.steps': step}}).matched_count
-
-def delete_step(email, pi, si):
-    c = by_email(email)
-    if not c: return None
-    projects = c.get('projects', [])
-    if pi < 0 or pi >= len(projects): return None
-    steps = projects[pi].get('steps', [])
-    if si < 0 or si >= len(steps): return None
-    steps.pop(si)
-    extensions.db.clients.update_one({'_id': c['_id']}, {'$set': {f'projects.{pi}.steps': steps}})
-    return True
+summary = (f"Seed terminé — base : {DB_NAME}\n{'-'*48}\n"
+           f"ADMIN  email : sudosudev@outlook.com\nADMIN  code  : {admin_code}\n"
+           f"CLIENT email : sebagsacha@gmail.com\nCLIENT id    : {client_id}\n{'-'*48}\n"
+           f"Stocké haché — garde ce fichier privé (ne pas committer).\n")
+print('\n  ' + summary.replace('\n', '\n  '))
+with open('seed-credentials.txt', 'w', encoding='utf-8') as f:
+    f.write(summary)
+print('  Enregistré dans seed-credentials.txt\n')
