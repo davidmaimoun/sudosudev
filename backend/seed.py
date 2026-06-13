@@ -3,8 +3,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
 from bson.errors import InvalidId
 
-from .. import extensions
-from ..services.security import gen_client_id
+from app import extensions
+from app.services.security import gen_client_id
 
 VALID_STATUS = ('done', 'in_progress', 'todo')
 
