@@ -129,7 +129,19 @@ def update_step(email, pi, si):
         return jsonify(ok=True, mailed=mailed)
     # title / eta / note / needsClient edit
     r = Client.update_step(email, pi, si, d.get('title'), d.get('eta'), d.get('note'), d.get('needsClient'))
-    return jsonify(ok=True) if r else (jsonify(error='not found'), 404)
+    if not r:
+        return jsonify(error='not found'), 404
+    mailed = False
+    if d.get('needsClient') and d.get('notify'):
+        c = Client.by_email(email)
+        try:
+            p = c['projects'][pi]; st = p['steps'][si]
+            mailed = mailer.notify_client_step_action(
+                c['email'], Client.display_name(c), p.get('name', ''),
+                st.get('title', ''), st.get('note', ''))
+        except Exception as e:
+            print('[mail] step-action notify failed:', e)
+    return jsonify(ok=True, mailed=mailed)
 
 
 @bp.delete('/clients/<email>/projects/<int:pi>/steps/<int:si>')

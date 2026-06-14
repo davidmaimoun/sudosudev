@@ -48,6 +48,13 @@ def admin_login():
     return jsonify(ok=True, email=email)
 
 
+@bp.get('/admin/me')
+def admin_me():
+    if session.get('role') != 'admin':
+        return jsonify(error='unauthorized'), 401
+    return jsonify(ok=True, role='admin')
+
+
 # ── client toggles their OWN substep (and notifies the admin) ──
 @bp.patch('/me/projects/<int:pi>/steps/<int:si>/substeps/<int:bi>')
 def client_toggle_substep(pi, si, bi):

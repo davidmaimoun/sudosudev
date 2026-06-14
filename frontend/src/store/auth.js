@@ -1,101 +1,60 @@
 import { create } from 'zustand'
 import { api } from '../lib/api.js'
 
-// admin data store: client list + the currently opened client
-export const useAdmin = create((set, get) => ({
-  clients: [],
-  loading: false,
-  current: null,        // { name, email, projects: [...] }
+export const useAuth = create((set) => ({
+  role: null,            // 'client' | 'admin' | null
+  workspace: null,       // client workspace data
+  loading: true,
 
-  async loadClients() {
-    set({ loading: true })
+  // restore an existing session on app load (client OR admin)
+  async init() {
     try {
-      const { data } = await api.get('/admin/clients')
-      set({ clients: data.clients, loading: false })
-    } catch {
-      set({ loading: false })
-    }
+      const { data } = await api.get('/me')
+      set({ role: 'client', workspace: data, loading: false })
+      return
+    } catch {}
+    try {
+      await api.get('/admin/me')
+      set({ role: 'admin', workspace: null, loading: false })
+      return
+    } catch {}
+    set({ role: null, workspace: null, loading: false })
   },
 
-  async createClient(payload) {
-    const { data } = await api.post('/admin/clients', payload)
-    await get().loadClients()
-    return data            // { email, clientId }  <-- shown once
+  async loginClient(email, clientId) {
+    const { data } = await api.post('/login', { email, clientId })
+    set({ role: 'client', workspace: data })
+    return data
   },
 
-  async updateClient(email, fields) {
-    await api.patch(`/admin/clients/${encodeURIComponent(email)}`, fields)
-    await get().openClient(email)
-    await get().loadClients()
+  async loginAdmin(email, code) {
+    await api.post('/admin/login', { email, code })
+    set({ role: 'admin', workspace: null })
   },
 
-  async deleteClient(email) {
-    await api.delete(`/admin/clients/${encodeURIComponent(email)}`)
-    set({ current: null })
-    await get().loadClients()
+  async logout() {
+    try { await api.post('/logout') } catch {}
+    set({ role: null, workspace: null })
   },
 
-  async openClient(email) {
-    const { data } = await api.get(`/admin/clients/${encodeURIComponent(email)}`)
-    set({ current: data })
-  },
-
-  async regenerateId(email) {
-    const { data } = await api.post(`/admin/clients/${encodeURIComponent(email)}/regenerate-id`)
-    return data.clientId
-  },
-
-  async addProject(email, project) {
-    await api.post(`/admin/clients/${encodeURIComponent(email)}/projects`, project)
-    await get().openClient(email)
-  },
-
-  async updateProject(email, pi, fields) {
-    await api.patch(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}`, fields)
-    await get().openClient(email)
-  },
-
-  async deleteProject(email, pi) {
-    await api.delete(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}`)
-    await get().openClient(email)
-  },
-
-  async setStatus(email, pi, si, status, notify = false) {
-    const { data } = await api.patch(
-      `/admin/clients/${encodeURIComponent(email)}/projects/${pi}/steps/${si}`,
-      { status, notify })
-    await get().openClient(email)
+  // client checks/unchecks one of their own substeps (notifies admin server-side)
+  async toggleSubstep(pi, si, bi, done, clientNote) {
+    const { data } = await api.patch(`/me/projects/${pi}/steps/${si}/substeps/${bi}`, { done, clientNote })
+    // refresh workspace
+    const me = await api.get('/me')
+    set({ workspace: me.data })
     return data?.mailed === true
   },
 
-  async addStep(email, pi, step) {
-    await api.post(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/steps`, step)
-    await get().openClient(email)
-  },
+  clear() { set({ role: null, workspace: null }) },
 
-  async updateStep(email, pi, si, fields) {
-    await api.patch(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/steps/${si}`, fields)
-    await get().openClient(email)
+  // recovery (no auth)
+  async recoverRequest(email) {
+    const { data } = await api.post('/recover/request', { email })
+    return data?.ttlMin || 10
   },
-
-  async deleteStep(email, pi, si) {
-    await api.delete(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/steps/${si}`)
-    await get().openClient(email)
-  },
-
-  async addSubstep(email, pi, si, sub) {
-    const { data } = await api.post(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/steps/${si}/substeps`, sub)
-    await get().openClient(email)
-    return data?.mailed === true
-  },
-
-  async updateSubstep(email, pi, si, bi, fields) {
-    await api.patch(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/steps/${si}/substeps/${bi}`, fields)
-    await get().openClient(email)
-  },
-
-  async deleteSubstep(email, pi, si, bi) {
-    await api.delete(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/steps/${si}/substeps/${bi}`)
-    await get().openClient(email)
+  async recoverConfirm(email, token) {
+    const { data } = await api.post('/recover/confirm', { email, token })
+    return data   // { clientId, emailed }
   },
 }))

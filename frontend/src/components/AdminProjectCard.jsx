@@ -4,6 +4,7 @@ import { Check, LoaderCircle, Circle, Trash2, Pencil, Plus, X, StickyNote, UserR
 import { useAdmin } from '../store/admin.js'
 import { toast } from 'sonner'
 import NotifyModal from './NotifyModal.jsx'
+import ActionNotifyModal from './ActionNotifyModal.jsx'
 
 const OPTS = [
   { key: 'todo',        label: 'Not started', Icon: Circle,       on: 'border-faint text-faint' },
@@ -33,6 +34,7 @@ function StepRow({ email, pi, si, step }) {
   const [editing, setEditing] = useState(false)
   const [noteEditing, setNoteEditing] = useState(false)
   const [pending, setPending] = useState(null)   // status awaiting notify-confirmation
+  const [flagging, setFlagging] = useState(false) // step-action notify modal
   const [title, setTitle] = useState(step.title)
   const [eta, setEta] = useState(step.eta || '')
   const [note, setNote] = useState(step.note || '')
@@ -77,7 +79,7 @@ function StepRow({ email, pi, si, step }) {
         {step.eta && <span className="font-mono text-[.58rem] text-faint">~ {step.eta}</span>}
         <StatusToggles status={step.status} onPick={(s) => setPending(s)} />
         <div className="flex gap-1 opacity-100 sm:opacity-40 sm:group-hover:opacity-100 transition-opacity">
-          <button onClick={() => updateStep(email, pi, si, { needsClient: !step.needsClient })}
+          <button onClick={() => step.needsClient ? updateStep(email, pi, si, { needsClient: false }) : setFlagging(true)}
             title={step.needsClient ? 'Remove client-action flag' : 'Mark as needing client action'}
             className={`grid place-items-center w-7 h-7 border transition-colors
               ${step.needsClient ? 'border-rose-400/60 text-rose-300' : 'border-line text-faint hover:text-rose-300 hover:border-rose-400/50'}`}>
@@ -122,6 +124,10 @@ function StepRow({ email, pi, si, step }) {
       {pending && (
         <NotifyModal email={email} pi={pi} si={si} step={step} status={pending}
                      onClose={() => setPending(null)} />
+      )}
+      {flagging && (
+        <ActionNotifyModal email={email} pi={pi} si={si} step={step}
+                           onClose={() => setFlagging(false)} />
       )}
     </div>
   )

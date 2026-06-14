@@ -95,6 +95,24 @@ def _login_url():
     return os.environ.get('APP_URL', 'https://sudosudev.com/app') + '/login'
 
 
+# ── client: a step now needs their action ──
+def notify_client_step_action(client_email, client_name, project_name, step_title, note=''):
+    subject = f"[sudosudev] Your action is needed — {project_name}"
+    body = (f"Hi {client_name},\n\nA step now needs your action on \"{project_name}\":\n"
+            f"  • {step_title}\n")
+    if note:
+        body += f"\nNote: {note}\n"
+    body += f"\nOpen your space: {_login_url()}\n\n— sudosudev"
+    note_html = (f"<div style=\"margin-top:10px;font-size:13px;color:rgba(196,226,255,.7);\">{note}</div>") if note else ""
+    intro = (f"Hi <b style=\"color:#ddeeff;\">{client_name}</b>,<br><br>"
+             f"A step now needs your action on <b style=\"color:#ddeeff;\">{project_name}</b>:"
+             f"<div style=\"margin:16px 0;padding:14px 16px;background:#070e1d;border-left:3px solid #f87a8f;border-radius:0 6px 6px 0;\">"
+             f"<span style=\"color:#ddeeff;\">{step_title}</span>{note_html}</div>"
+             f"Open your space to see the details.")
+    html = _shell("Your action is needed", intro, button=("OPEN MY SPACE →", _login_url()), accent='#f87a8f')
+    return send(client_email, subject, body, html)
+
+
 # ── client: a step status changed ──
 def notify_status_change(client_email, client_name, project_name, step_title, status):
     label = STATUS_LABEL.get(status, status)

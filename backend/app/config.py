@@ -1,8 +1,29 @@
 import os, secrets
 
 
+def _stable_secret_key():
+    """Use SECRET_KEY from env; otherwise persist one to a file so that
+    ALL gunicorn workers and restarts share the same key (sessions survive)."""
+    env = os.environ.get('SECRET_KEY')
+    if env:
+        return env
+    path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.secret_key')
+    try:
+        with open(path) as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        key = secrets.token_hex(32)
+        try:
+            with open(path, 'w') as f:
+                f.write(key)
+            os.chmod(path, 0o600)
+        except OSError:
+            pass
+        return key
+
+
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or secrets.token_hex(32)
+    SECRET_KEY = _stable_secret_key()
     MONGO_URI  = os.environ.get('MONGO_URI', 'mongodb://localhost:27017')
     DB_NAME    = os.environ.get('DB_NAME', 'sudosudev')
 
