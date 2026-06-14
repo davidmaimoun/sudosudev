@@ -73,7 +73,7 @@ export default function CreateClientModal({ onClose }) {
         </div>
         <div className="mb-3">
           <label className="label">Company <span className="text-faint normal-case">(optional)</span></label>
-          <input className="input" value={f.company} onChange={set('company')} placeholder="Marauder Compagny" />
+          <input className="input" value={f.company} onChange={set('company')} placeholder="The Marauder Compagny" />
         </div>
         <div className="grid grid-cols-2 gap-3 mb-6">
           <div>
