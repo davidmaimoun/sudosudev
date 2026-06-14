@@ -6,18 +6,19 @@ import { useAdmin } from '../store/admin.js'
 
 export default function CreateClientModal({ onClose }) {
   const createClient = useAdmin((s) => s.createClient)
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const [f, setF] = useState({ firstName: '', lastName: '', email: '', company: '', phone: '', address: '' })
   const [busy, setBusy] = useState(false)
   const [result, setResult] = useState(null)   // { email, clientId }
   const [copied, setCopied] = useState(false)
+  const set = (k) => (e) => setF((s) => ({ ...s, [k]: e.target.value }))
 
   async function submit(e) {
     e.preventDefault()
-    if (!name || !email) return toast.error('Name and email required.')
+    if (!f.firstName.trim() || !f.lastName.trim() || !f.email.trim())
+      return toast.error('First name, last name and email are required.')
     setBusy(true)
     try {
-      const r = await createClient(name, email)
+      const r = await createClient(f)
       setResult(r)
       toast.success('Client created.')
     } catch (err) {
@@ -37,7 +38,7 @@ export default function CreateClientModal({ onClose }) {
       <Modal title="Client created" onClose={onClose}>
         <p className="text-sm text-dim mb-4 leading-relaxed">
           Give these to <b className="text-ink">{result.email}</b>. The Client ID is shown
-          <b className="text-sky"> only once</b> — it’s stored hashed.
+          <b className="text-sky"> only once</b> — it’s stored encrypted.
         </p>
         <div className="bg-bg2 border border-linehi p-4 font-mono">
           <div className="text-[.6rem] text-faint tracking-wide uppercase mb-1">Client ID</div>
@@ -54,15 +55,35 @@ export default function CreateClientModal({ onClose }) {
   }
 
   return (
-    <Modal title="New client" onClose={onClose}>
+    <Modal title="New client" onClose={onClose} maxW="max-w-[500px]">
       <form onSubmit={submit}>
-        <div className="mb-4">
-          <label className="label">Client name</label>
-          <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Acme Bio Labs" />
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          <div>
+            <label className="label">First name *</label>
+            <input className="input" value={f.firstName} onChange={set('firstName')} placeholder="Sacha" />
+          </div>
+          <div>
+            <label className="label">Last name *</label>
+            <input className="input" value={f.lastName} onChange={set('lastName')} placeholder="Sebag" />
+          </div>
         </div>
-        <div className="mb-6">
-          <label className="label">Email</label>
-          <input type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="contact@acme.bio" />
+        <div className="mb-3">
+          <label className="label">Email *</label>
+          <input type="email" className="input" value={f.email} onChange={set('email')} placeholder="contact@client.com" />
+        </div>
+        <div className="mb-3">
+          <label className="label">Company <span className="text-faint normal-case">(optional)</span></label>
+          <input className="input" value={f.company} onChange={set('company')} placeholder="Tataphone" />
+        </div>
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div>
+            <label className="label">Phone <span className="text-faint normal-case">(opt.)</span></label>
+            <input className="input" value={f.phone} onChange={set('phone')} placeholder="+972…" />
+          </div>
+          <div>
+            <label className="label">Address <span className="text-faint normal-case">(opt.)</span></label>
+            <input className="input" value={f.address} onChange={set('address')} placeholder="City…" />
+          </div>
         </div>
         <button type="submit" className="btn-connect" disabled={busy}>
           {busy ? 'CREATING…' : 'CREATE CLIENT →'}

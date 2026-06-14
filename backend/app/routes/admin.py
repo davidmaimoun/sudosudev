@@ -16,12 +16,15 @@ def list_clients():
 @require_admin
 def create_client():
     d = request.get_json(silent=True) or {}
-    name, email = (d.get('name') or '').strip(), (d.get('email') or '').strip().lower()
-    if not name or not email:
-        return jsonify(error='name and email required'), 400
+    first = (d.get('firstName') or '').strip()
+    last  = (d.get('lastName') or '').strip()
+    email = (d.get('email') or '').strip().lower()
+    if not first or not last or not email:
+        return jsonify(error='firstName, lastName and email required'), 400
     if Client.by_email(email):
         return jsonify(error='email already exists'), 409
-    cid = Client.create(name, email)
+    cid = Client.create(first, last, email,
+                        d.get('company', ''), d.get('phone', ''), d.get('address', ''))
     return jsonify(ok=True, email=email, clientId=cid)
 
 
@@ -31,7 +34,20 @@ def get_client(email):
     c = Client.by_email(email)
     if not c:
         return jsonify(error='not found'), 404
-    return jsonify(name=c.get('name'), email=c['email'], projects=c.get('projects', []))
+    return jsonify(
+        name=Client.display_name(c), email=c['email'],
+        firstName=c.get('firstName', ''), lastName=c.get('lastName', ''),
+        company=c.get('company', ''), phone=c.get('phone', ''),
+        address=c.get('address', ''),
+        projects=c.get('projects', []))
+
+
+@bp.patch('/clients/<email>')
+@require_admin
+def update_client(email):
+    d = request.get_json(silent=True) or {}
+    r = Client.update_profile(email, d)
+    return jsonify(ok=True) if r else (jsonify(error='not found or no change'), 404)
 
 
 @bp.delete('/clients/<email>')
@@ -44,7 +60,15 @@ def delete_client(email):
 @require_admin
 def regenerate_id(email):
     cid = Client.regenerate_id(email)
-    return jsonify(ok=True, clientId=cid) if cid else (jsonify(error='not found'), 404)
+    if not cid:
+        return jsonify(error='not found'), 404
+    emailed = False
+    c = Client.by_email(email)
+    try:
+        emailed = mailer.send_new_client_id(c['email'], Client.display_name(c), cid)
+    except Exception as e:
+        print('[mail] regenerate notify failed:', e)
+    return jsonify(ok=True, clientId=cid, emailed=emailed)
 
 
 # ── projects ──
@@ -52,8 +76,16 @@ def regenerate_id(email):
 @require_admin
 def add_project(email):
     d = request.get_json(silent=True) or {}
-    ok = Client.add_project(email, d.get('name'), d.get('description'), d.get('steps'))
+    ok = Client.add_project(email, d.get('name'), d.get('description'), d.get('steps'), d.get('url', ''))
     return jsonify(ok=True) if ok else (jsonify(error='client not found'), 404)
+
+
+@bp.patch('/clients/<email>/projects/<int:pi>')
+@require_admin
+def update_project(email, pi):
+    d = request.get_json(silent=True) or {}
+    r = Client.update_project(email, pi, d.get('name'), d.get('description'), d.get('url'))
+    return jsonify(ok=True) if r else (jsonify(error='not found or no change'), 404)
 
 
 @bp.delete('/clients/<email>/projects/<int:pi>')
@@ -104,3 +136,30 @@ def update_step(email, pi, si):
 @require_admin
 def delete_step(email, pi, si):
     return jsonify(ok=True) if Client.delete_step(email, pi, si) else (jsonify(error='not found'), 404)
+
+
+# ── substeps (admin) ──
+@bp.post('/clients/<email>/projects/<int:pi>/steps/<int:si>/substeps')
+@require_admin
+def add_substep(email, pi, si):
+    d = request.get_json(silent=True) or {}
+    if not (d.get('title') or '').strip():
+        return jsonify(error='title required'), 400
+    ok = Client.add_substep(email, pi, si, d.get('title'), d.get('owner', 'admin'))
+    return jsonify(ok=True) if ok else (jsonify(error='not found'), 404)
+
+
+@bp.patch('/clients/<email>/projects/<int:pi>/steps/<int:si>/substeps/<int:bi>')
+@require_admin
+def update_substep(email, pi, si, bi):
+    d = request.get_json(silent=True) or {}
+    r = Client.set_substep(email, pi, si, bi,
+                           done=d.get('done'), title=d.get('title'),
+                           owner=d.get('owner'), client_note=d.get('clientNote'))
+    return jsonify(ok=True) if r else (jsonify(error='not found'), 404)
+
+
+@bp.delete('/clients/<email>/projects/<int:pi>/steps/<int:si>/substeps/<int:bi>')
+@require_admin
+def delete_substep(email, pi, si, bi):
+    return jsonify(ok=True) if Client.delete_substep(email, pi, si, bi) else (jsonify(error='not found'), 404)

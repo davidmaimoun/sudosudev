@@ -15,4 +15,5 @@ def init_db(app):
     # indexes (idempotent)
     db.clients.create_index('email', unique=True)
     db.admins.create_index('email', unique=True)
+    db.recovery_tokens.create_index('expiresAt', expireAfterSeconds=0)
     return db

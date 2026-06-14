@@ -36,7 +36,11 @@ def step(title, status='todo', note='', needs_client=False):
 
 client_id = gen_client_id()
 db.clients.insert_one({
-    'name': 'Sacha Sebag',
+    'firstName': 'Sacha',
+    'lastName': 'Sebag',
+    'company': 'Tataphone',
+    'phone': '',
+    'address': '',
     'email': 'sebagsacha@gmail.com',
     'role': 'client',
     'clientIdHash': generate_password_hash(client_id),

@@ -48,6 +48,10 @@ export default function Login() {
           <button type="submit" className="btn-connect" disabled={busy}>
             {busy ? 'CONNECTING…' : 'CONNECT →'}
           </button>
+          <button type="button" onClick={() => nav('/recover')}
+            className="w-full mt-3 font-mono text-[.62rem] text-faint hover:text-sky transition-colors">
+            Forgot your ID?
+          </button>
         </form>
       </div>
     </Shell>

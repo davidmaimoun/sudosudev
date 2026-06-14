@@ -55,3 +55,51 @@ def notify_status_change(client_email, client_name, project_name, step_title, st
         f"— sudosudev"
     )
     return send(client_email, subject, body)
+
+
+def notify_admin_substep_done(client_name, client_email, project_name,
+                              step_title, substep_title, client_note=''):
+    """Email the admin when a client completes one of their substeps."""
+    admin_to = os.environ.get('ADMIN_EMAIL') or os.environ.get('SMTP_USER')
+    if not admin_to:
+        print('[mail] no ADMIN_EMAIL set, skipping admin notify')
+        return False
+    subject = f"[sudosudev] {client_name} completed a task — {project_name}"
+    body = (
+        f"{client_name} ({client_email}) marked a sub-task as done.\n\n"
+        f"  Project  : {project_name}\n"
+        f"  Step     : {step_title}\n"
+        f"  Task     : {substep_title}\n"
+    )
+    if client_note:
+        body += f"\n  Client note:\n  \"{client_note}\"\n"
+    body += "\n— sudosudev"
+    return send(admin_to, subject, body)
+
+
+def send_recovery_link(client_email, client_name, link, ttl_min=10):
+    subject = "[sudosudev] Recover your access ID"
+    body = (
+        f"Hi {client_name},\n\n"
+        f"You asked to regenerate your client ID.\n"
+        f"Click the link below within {ttl_min} minutes to generate a new one:\n\n"
+        f"{link}\n\n"
+        f"If you didn't request this, just ignore this email — "
+        f"your current ID stays valid.\n\n"
+        f"— sudosudev"
+    )
+    return send(client_email, subject, body)
+
+
+def send_new_client_id(client_email, client_name, client_id, app_url=None):
+    app_url = app_url or os.environ.get('APP_URL', 'https://sudosudev.com/app')
+    subject = "[sudosudev] Your new access ID"
+    body = (
+        f"Hi {client_name},\n\n"
+        f"Here is your new client ID:\n\n"
+        f"    {client_id}\n\n"
+        f"Sign in here with your email and this ID:\n{app_url}/login\n\n"
+        f"Note: your previous ID no longer works.\n\n"
+        f"— sudosudev"
+    )
+    return send(client_email, subject, body)

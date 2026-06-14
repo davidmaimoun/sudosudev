@@ -17,10 +17,16 @@ export const useAdmin = create((set, get) => ({
     }
   },
 
-  async createClient(name, email) {
-    const { data } = await api.post('/admin/clients', { name, email })
+  async createClient(payload) {
+    const { data } = await api.post('/admin/clients', payload)
     await get().loadClients()
     return data            // { email, clientId }  <-- shown once
+  },
+
+  async updateClient(email, fields) {
+    await api.patch(`/admin/clients/${encodeURIComponent(email)}`, fields)
+    await get().openClient(email)
+    await get().loadClients()
   },
 
   async deleteClient(email) {
@@ -41,6 +47,11 @@ export const useAdmin = create((set, get) => ({
 
   async addProject(email, project) {
     await api.post(`/admin/clients/${encodeURIComponent(email)}/projects`, project)
+    await get().openClient(email)
+  },
+
+  async updateProject(email, pi, fields) {
+    await api.patch(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}`, fields)
     await get().openClient(email)
   },
 
@@ -69,6 +80,21 @@ export const useAdmin = create((set, get) => ({
 
   async deleteStep(email, pi, si) {
     await api.delete(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/steps/${si}`)
+    await get().openClient(email)
+  },
+
+  async addSubstep(email, pi, si, sub) {
+    await api.post(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/steps/${si}/substeps`, sub)
+    await get().openClient(email)
+  },
+
+  async updateSubstep(email, pi, si, bi, fields) {
+    await api.patch(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/steps/${si}/substeps/${bi}`, fields)
+    await get().openClient(email)
+  },
+
+  async deleteSubstep(email, pi, si, bi) {
+    await api.delete(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/steps/${si}/substeps/${bi}`)
     await get().openClient(email)
   },
 }))

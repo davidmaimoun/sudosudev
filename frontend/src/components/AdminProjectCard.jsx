@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Check, LoaderCircle, Circle, Trash2, Pencil, Plus, X, StickyNote, UserRound } from 'lucide-react'
+import { Check, LoaderCircle, Circle, Trash2, Pencil, Plus, X, StickyNote, UserRound,
+         Wrench, Square, CheckSquare, ListPlus, ExternalLink, Link as LinkIcon } from 'lucide-react'
 import { useAdmin } from '../store/admin.js'
 import NotifyModal from './NotifyModal.jsx'
 
@@ -74,7 +75,7 @@ function StepRow({ email, pi, si, step }) {
         </span>
         {step.eta && <span className="font-mono text-[.58rem] text-faint">~ {step.eta}</span>}
         <StatusToggles status={step.status} onPick={(s) => setPending(s)} />
-        <div className="flex gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
+        <div className="flex gap-1 opacity-100 sm:opacity-40 sm:group-hover:opacity-100 transition-opacity">
           <button onClick={() => updateStep(email, pi, si, { needsClient: !step.needsClient })}
             title={step.needsClient ? 'Remove client-action flag' : 'Mark as needing client action'}
             className={`grid place-items-center w-7 h-7 border transition-colors
@@ -115,9 +116,71 @@ function StepRow({ email, pi, si, step }) {
         </div>
       )}
 
+      <AdminSubsteps email={email} pi={pi} si={si} substeps={step.substeps || []} />
+
       {pending && (
         <NotifyModal email={email} pi={pi} si={si} step={step} status={pending}
                      onClose={() => setPending(null)} />
+      )}
+    </div>
+  )
+}
+
+function AdminSubsteps({ email, pi, si, substeps }) {
+  const { addSubstep, updateSubstep, deleteSubstep } = useAdmin()
+  const [open, setOpen] = useState(false)
+  const [title, setTitle] = useState('')
+  const [owner, setOwner] = useState('admin')
+
+  async function add() {
+    if (!title.trim()) return
+    await addSubstep(email, pi, si, { title, owner })
+    setTitle(''); setOwner('admin'); setOpen(false)
+  }
+
+  return (
+    <div className="ml-8 mt-2">
+      {substeps.map((b, bi) => (
+        <div key={bi} className="flex items-center gap-2 py-1 group/sub">
+          <button onClick={() => updateSubstep(email, pi, si, bi, { done: !b.done })}
+            className={`shrink-0 ${b.done ? 'text-em' : 'text-faint hover:text-dim'}`}>
+            {b.done ? <CheckSquare size={15} /> : <Square size={15} />}
+          </button>
+          <span className={`flex-1 text-[.82rem] ${b.done ? 'line-through text-faint' : ''}`}>{b.title}</span>
+          <span title={b.owner === 'client' ? 'Client' : 'You'}
+            className={`inline-flex items-center gap-1 font-mono text-[.5rem] uppercase tracking-wide px-1.5 py-[2px] border
+              ${b.owner === 'client' ? 'text-rose-300 border-rose-400/50 bg-rose-400/10' : 'text-sky border-sky/40 bg-sky/5'}`}>
+            {b.owner === 'client' ? <UserRound size={9} /> : <Wrench size={9} />}
+            {b.owner === 'client' ? 'client' : 'moi'}
+          </span>
+          {b.clientNote && (
+            <span title={b.clientNote} className="text-[.6rem] text-amber/80 max-w-[120px] truncate">“{b.clientNote}”</span>
+          )}
+          <button onClick={() => deleteSubstep(email, pi, si, bi)}
+            className="shrink-0 text-faint/50 hover:text-red-400 opacity-100 sm:opacity-0 sm:group-hover/sub:opacity-100 transition-opacity">
+            <X size={13} />
+          </button>
+        </div>
+      ))}
+
+      {open ? (
+        <div className="flex items-center gap-2 mt-1 flex-wrap">
+          <input className="input flex-1 min-w-[140px]" placeholder="Sub-task…" value={title} autoFocus
+                 onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} />
+          <div className="flex border border-line">
+            <button onClick={() => setOwner('admin')}
+              className={`px-2 py-1.5 font-mono text-[.55rem] uppercase ${owner === 'admin' ? 'bg-sky/15 text-sky' : 'text-faint'}`}>moi</button>
+            <button onClick={() => setOwner('client')}
+              className={`px-2 py-1.5 font-mono text-[.55rem] uppercase ${owner === 'client' ? 'bg-rose-400/15 text-rose-300' : 'text-faint'}`}>client</button>
+          </div>
+          <button onClick={add} className="grid place-items-center w-7 h-7 border border-em/60 text-em hover:bg-em/10"><Check size={14} /></button>
+          <button onClick={() => { setOpen(false); setTitle('') }} className="grid place-items-center w-7 h-7 border border-line text-faint hover:text-dim"><X size={14} /></button>
+        </div>
+      ) : (
+        <button onClick={() => setOpen(true)}
+          className="inline-flex items-center gap-1.5 font-mono text-[.58rem] text-faint hover:text-sky transition-colors mt-1">
+          <ListPlus size={12} /> add sub-task
+        </button>
       )}
     </div>
   )
@@ -158,17 +221,47 @@ function AddStep({ email, pi }) {
 }
 
 export default function AdminProjectCard({ email, project, pi }) {
-  const deleteProject = useAdmin((s) => s.deleteProject)
+  const { deleteProject, updateProject } = useAdmin()
+  const [editingUrl, setEditingUrl] = useState(false)
+  const [url, setUrl] = useState(project.url || '')
   const done = project.steps.filter((s) => s.status === 'done').length
   const pct = project.steps.length ? Math.round((done / project.steps.length) * 100) : 0
+
+  async function saveUrl() {
+    await updateProject(email, pi, { url })
+    setEditingUrl(false)
+  }
 
   return (
     <div className="card p-6 mb-5">
       <span className="absolute top-0 left-0 bottom-0 w-0.5 bg-gradient-to-b from-sky to-em" />
       <div className="flex items-start justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <h3 className="text-lg font-semibold tracking-tight">{project.name}</h3>
           {project.description && <p className="text-[.85rem] text-dim mt-1">{project.description}</p>}
+          {editingUrl ? (
+            <div className="flex items-center gap-2 mt-2">
+              <input className="input flex-1 min-w-[180px]" value={url} autoFocus
+                placeholder="https://staging.example.com"
+                onChange={(e) => setUrl(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && saveUrl()} />
+              <button onClick={saveUrl} className="grid place-items-center w-7 h-7 border border-em/60 text-em hover:bg-em/10"><Check size={14} /></button>
+              <button onClick={() => { setEditingUrl(false); setUrl(project.url || '') }} className="grid place-items-center w-7 h-7 border border-line text-faint hover:text-dim"><X size={14} /></button>
+            </div>
+          ) : project.url ? (
+            <div className="flex items-center gap-2 mt-2">
+              <a href={project.url} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 font-mono text-[.6rem] tracking-wide text-em border border-em/50 bg-em/5 px-2.5 py-1 hover:bg-em/12 transition-colors truncate max-w-[260px]">
+                <ExternalLink size={12} /> {project.url.replace(/^https?:\/\//, '')}
+              </a>
+              <button onClick={() => { setUrl(project.url); setEditingUrl(true) }} title="Edit URL"
+                className="grid place-items-center w-6 h-6 border border-line text-faint hover:text-sky hover:border-sky transition-colors"><Pencil size={11} /></button>
+            </div>
+          ) : (
+            <button onClick={() => setEditingUrl(true)}
+              className="inline-flex items-center gap-1.5 font-mono text-[.58rem] text-faint hover:text-em transition-colors mt-2">
+              <LinkIcon size={11} /> add live URL
+            </button>
+          )}
           <div className="font-mono text-[.6rem] text-faint mt-2 tracking-wider">{done}/{project.steps.length} · {pct}%</div>
         </div>
         <button onClick={() => { if (confirm('Delete this project?')) deleteProject(email, pi) }}

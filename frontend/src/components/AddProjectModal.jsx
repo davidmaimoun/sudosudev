@@ -10,6 +10,7 @@ export default function AddProjectModal({ email, onClose }) {
   const addProject = useAdmin((s) => s.addProject)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [url, setUrl] = useState('')
   const [steps, setSteps] = useState([blankStep(), blankStep()])
   const [busy, setBusy] = useState(false)
 
@@ -27,7 +28,7 @@ export default function AddProjectModal({ email, onClose }) {
     setBusy(true)
     try {
       // step 1 becomes in_progress automatically on the backend
-      await addProject(email, { name, description, steps: clean })
+      await addProject(email, { name, description, url, steps: clean })
       toast.success('Project added.')
       onClose()
     } catch {
@@ -47,6 +48,10 @@ export default function AddProjectModal({ email, onClose }) {
         <div className="mb-5">
           <label className="label">Description</label>
           <input className="input" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Short summary…" />
+        </div>
+        <div className="mb-5">
+          <label className="label">Live URL <span className="text-faint normal-case">(optional)</span></label>
+          <input className="input" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://staging.tataphone.co.il" />
         </div>
 
         <div className="label mb-2">Steps <span className="text-faint normal-case">(step 1 starts “in progress”)</span></div>
