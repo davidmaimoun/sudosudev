@@ -49,7 +49,7 @@ function ClientSubsteps({ pi, si, substeps }) {
               <span className={`flex-1 text-[.84rem] ${b.done ? 'line-through text-faint' : mine ? '' : 'text-dim'}`}>{b.title}</span>
               <span className={`inline-flex items-center gap-1 font-mono text-[.5rem] uppercase tracking-wide px-1.5 py-[2px] border shrink-0
                 ${mine ? 'text-rose-300 border-rose-400/50 bg-rose-400/10' : 'text-sky border-sky/40 bg-sky/5'}`}>
-                {mine ? <UserRound size={9} /> : <Wrench size={9} />} {mine ? 'à vous' : 'sudosudev'}
+                {mine ? <UserRound size={9} /> : <Wrench size={9} />} {mine ? 'you' : 'sudosudev'}
               </span>
             </div>
             {mine && noteFor === bi && (

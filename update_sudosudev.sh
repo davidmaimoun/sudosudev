@@ -12,7 +12,7 @@
 
 set -euo pipefail
 
-REPO_DIR="/var/www/sudosu"
+REPO_DIR="/var/www/sudosudev"
 BRANCH="main"
 API_SERVICE="sudosudev-api"
 BUILD=true

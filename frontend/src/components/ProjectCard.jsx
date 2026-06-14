@@ -18,8 +18,15 @@ export default function ProjectCard({ project, pi = 0 }) {
         )}
       </div>
       {project.description && <p className="text-[.88rem] text-dim mt-2 leading-relaxed">{project.description}</p>}
-      <div className="font-mono text-[.6rem] text-faint mt-3 tracking-wider">
-        {done}/{project.steps.length} steps · {pct}%
+      <div className="mt-4">
+        <div className="flex items-center justify-between font-mono text-[.6rem] text-faint tracking-wider mb-1.5">
+          <span>{done}/{project.steps.length} steps</span>
+          <span className="text-sky">{pct}%</span>
+        </div>
+        <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ background: 'rgba(86,207,252,.12)' }}>
+          <div className="h-full rounded-full transition-all duration-700"
+               style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#56cffc,#2dd4a0)' }} />
+        </div>
       </div>
       <div className="mt-6">
         {project.steps.map((s, i) => (

@@ -151,7 +151,7 @@ function AdminSubsteps({ email, pi, si, substeps }) {
             className={`inline-flex items-center gap-1 font-mono text-[.5rem] uppercase tracking-wide px-1.5 py-[2px] border
               ${b.owner === 'client' ? 'text-rose-300 border-rose-400/50 bg-rose-400/10' : 'text-sky border-sky/40 bg-sky/5'}`}>
             {b.owner === 'client' ? <UserRound size={9} /> : <Wrench size={9} />}
-            {b.owner === 'client' ? 'client' : 'moi'}
+            {b.owner === 'client' ? 'client' : 'me'}
           </span>
           {b.clientNote && (
             <span title={b.clientNote} className="text-[.6rem] text-amber/80 max-w-[120px] truncate">“{b.clientNote}”</span>
@@ -169,7 +169,7 @@ function AdminSubsteps({ email, pi, si, substeps }) {
                  onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} />
           <div className="flex border border-line">
             <button onClick={() => setOwner('admin')}
-              className={`px-2 py-1.5 font-mono text-[.55rem] uppercase ${owner === 'admin' ? 'bg-sky/15 text-sky' : 'text-faint'}`}>moi</button>
+              className={`px-2 py-1.5 font-mono text-[.55rem] uppercase ${owner === 'admin' ? 'bg-sky/15 text-sky' : 'text-faint'}`}>me</button>
             <button onClick={() => setOwner('client')}
               className={`px-2 py-1.5 font-mono text-[.55rem] uppercase ${owner === 'client' ? 'bg-rose-400/15 text-rose-300' : 'text-faint'}`}>client</button>
           </div>
