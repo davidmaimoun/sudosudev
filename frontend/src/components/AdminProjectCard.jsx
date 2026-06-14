@@ -69,7 +69,7 @@ function StepRow({ email, pi, si, step }) {
           {step.needsClient && (
             <span className="ml-2 inline-flex items-center gap-1 font-mono text-[.5rem] tracking-wide uppercase
                              text-rose-300 border border-rose-400/50 bg-rose-400/10 px-1.5 py-[2px] align-middle">
-              <UserRound size={9} /> action client
+              <UserRound size={9} /> client action
             </span>
           )}
         </span>
