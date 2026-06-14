@@ -143,10 +143,25 @@ def delete_step(email, pi, si):
 @require_admin
 def add_substep(email, pi, si):
     d = request.get_json(silent=True) or {}
-    if not (d.get('title') or '').strip():
+    title = (d.get('title') or '').strip()
+    if not title:
         return jsonify(error='title required'), 400
-    ok = Client.add_substep(email, pi, si, d.get('title'), d.get('owner', 'admin'))
-    return jsonify(ok=True) if ok else (jsonify(error='not found'), 404)
+    owner = d.get('owner', 'admin')
+    ok = Client.add_substep(email, pi, si, title, owner)
+    if not ok:
+        return jsonify(error='not found'), 404
+    mailed = False
+    if d.get('notify') and owner == 'client':
+        c = Client.by_email(email)
+        try:
+            step = c['projects'][pi]['steps'][si]
+            mailed = mailer.notify_client_new_task(
+                c['email'], Client.display_name(c),
+                c['projects'][pi].get('name', ''), step.get('title', ''),
+                title, d.get('note', ''))
+        except Exception as e:
+            print('[mail] new-task notify failed:', e)
+    return jsonify(ok=True, mailed=mailed)
 
 
 @bp.patch('/clients/<email>/projects/<int:pi>/steps/<int:si>/substeps/<int:bi>')

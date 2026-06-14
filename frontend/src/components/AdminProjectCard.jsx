@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Check, LoaderCircle, Circle, Trash2, Pencil, Plus, X, StickyNote, UserRound,
          Wrench, Square, CheckSquare, ListPlus, ExternalLink, Link as LinkIcon } from 'lucide-react'
 import { useAdmin } from '../store/admin.js'
+import { toast } from 'sonner'
 import NotifyModal from './NotifyModal.jsx'
 
 const OPTS = [
@@ -131,11 +132,13 @@ function AdminSubsteps({ email, pi, si, substeps }) {
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [owner, setOwner] = useState('admin')
+  const [notify, setNotify] = useState(true)
 
   async function add() {
     if (!title.trim()) return
-    await addSubstep(email, pi, si, { title, owner })
-    setTitle(''); setOwner('admin'); setOpen(false)
+    const mailed = await addSubstep(email, pi, si, { title, owner, notify: owner === 'client' && notify })
+    if (owner === 'client' && notify) toast.success(mailed ? 'Task added · client emailed.' : 'Task added (email is off).')
+    setTitle(''); setOwner('admin'); setNotify(true); setOpen(false)
   }
 
   return (
@@ -164,17 +167,26 @@ function AdminSubsteps({ email, pi, si, substeps }) {
       ))}
 
       {open ? (
-        <div className="flex items-center gap-2 mt-1 flex-wrap">
-          <input className="input flex-1 min-w-[140px]" placeholder="Sub-task…" value={title} autoFocus
-                 onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} />
-          <div className="flex border border-line">
-            <button onClick={() => setOwner('admin')}
-              className={`px-2 py-1.5 font-mono text-[.55rem] uppercase ${owner === 'admin' ? 'bg-sky/15 text-sky' : 'text-faint'}`}>me</button>
-            <button onClick={() => setOwner('client')}
-              className={`px-2 py-1.5 font-mono text-[.55rem] uppercase ${owner === 'client' ? 'bg-rose-400/15 text-rose-300' : 'text-faint'}`}>client</button>
+        <div className="mt-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <input className="input flex-1 min-w-[140px]" placeholder="Sub-task…" value={title} autoFocus
+                   onChange={(e) => setTitle(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} />
+            <div className="flex border border-line">
+              <button onClick={() => setOwner('admin')}
+                className={`px-2 py-1.5 font-mono text-[.55rem] uppercase ${owner === 'admin' ? 'bg-sky/15 text-sky' : 'text-faint'}`}>me</button>
+              <button onClick={() => setOwner('client')}
+                className={`px-2 py-1.5 font-mono text-[.55rem] uppercase ${owner === 'client' ? 'bg-rose-400/15 text-rose-300' : 'text-faint'}`}>client</button>
+            </div>
+            <button onClick={add} className="grid place-items-center w-7 h-7 border border-em/60 text-em hover:bg-em/10"><Check size={14} /></button>
+            <button onClick={() => { setOpen(false); setTitle('') }} className="grid place-items-center w-7 h-7 border border-line text-faint hover:text-dim"><X size={14} /></button>
           </div>
-          <button onClick={add} className="grid place-items-center w-7 h-7 border border-em/60 text-em hover:bg-em/10"><Check size={14} /></button>
-          <button onClick={() => { setOpen(false); setTitle('') }} className="grid place-items-center w-7 h-7 border border-line text-faint hover:text-dim"><X size={14} /></button>
+          {owner === 'client' && (
+            <label className="flex items-center gap-2 mt-2 font-mono text-[.6rem] text-dim cursor-pointer select-none">
+              <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)}
+                     className="accent-rose-400" />
+              email the client about this task
+            </label>
+          )}
         </div>
       ) : (
         <button onClick={() => setOpen(true)}
