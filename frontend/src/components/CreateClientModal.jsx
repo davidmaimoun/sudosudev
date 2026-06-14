@@ -60,11 +60,11 @@ export default function CreateClientModal({ onClose }) {
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
             <label className="label">First name *</label>
-            <input className="input" value={f.firstName} onChange={set('firstName')} placeholder="Sacha" />
+            <input className="input" value={f.firstName} onChange={set('firstName')} placeholder="John" />
           </div>
           <div>
             <label className="label">Last name *</label>
-            <input className="input" value={f.lastName} onChange={set('lastName')} placeholder="Sebag" />
+            <input className="input" value={f.lastName} onChange={set('lastName')} placeholder="Doe" />
           </div>
         </div>
         <div className="mb-3">
@@ -73,7 +73,7 @@ export default function CreateClientModal({ onClose }) {
         </div>
         <div className="mb-3">
           <label className="label">Company <span className="text-faint normal-case">(optional)</span></label>
-          <input className="input" value={f.company} onChange={set('company')} placeholder="Tataphone" />
+          <input className="input" value={f.company} onChange={set('company')} placeholder="Marauder Compagny" />
         </div>
         <div className="grid grid-cols-2 gap-3 mb-6">
           <div>
