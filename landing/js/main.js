@@ -38,12 +38,12 @@ const CODE_LINES = [
   {h:'<span class="cl-cm">// sudosu.dev / studio.ts</span>'},
   {h:''},
   {h:'<span class="cl-kw">const</span> <span class="cl-fn">studio</span> <span class="cl-pl">= {</span>'},
-  {h:'  <span class="cl-pl">name:</span>    <span class="cl-str">"sudosu.dev"</span><span class="cl-pl">,</span>'},
-  {h:'  <span class="cl-pl">type:</span>    <span class="cl-str">"fullstack"</span><span class="cl-pl">,</span>'},
-  {h:'  <span class="cl-pl">stack:</span>   <span class="cl-pl">[</span><span class="cl-str">"reactjs"</span><span class="cl-pl">,</span><span class="cl-str">"Flask"</span><span class="cl-pl">,</span><span class="cl-str">"TS"</span><span class="cl-pl">],</span>'},
-  {h:'  <span class="cl-pl">mobile:</span>  <span class="cl-str">"progressive web application"</span><span class="cl-pl">,</span>'},
-  {h:'  <span class="cl-pl">db:</span>      <span class="cl-str">"mongoDB"</span><span class="cl-pl">,</span>'},
-  {h:'  <span class="cl-pl">bio:</span>     <span class="cl-str">"nextflow / wdl"</span><span class="cl-pl">,</span>'},
+  {h:'  <span class="cl-pl">name:</span>    <span class="cl-str">"Sudosu.dev"</span><span class="cl-pl">,</span>'},
+  {h:'  <span class="cl-pl">type:</span>    <span class="cl-str">"Fullstack"</span><span class="cl-pl">,</span>'},
+  {h:'  <span class="cl-pl">stack:</span>   <span class="cl-pl">[</span><span class="cl-str">"Next.js"</span><span class="cl-pl"></span><span class="cl-str">"React"</span><span class="cl-pl">,</span><span class="cl-str">"Python"</span><span class="cl-pl">,</span><span class="cl-str">"TS"</span><span class="cl-pl">],</span>'},
+  {h:'  <span class="cl-pl">mobile:</span>  <span class="cl-str">"Progressive Web Application"</span><span class="cl-pl">,</span>'},
+  {h:'  <span class="cl-pl">db:</span>      <span class="cl-str">"MongoDB"</span><span class="cl-pl">,</span>'},
+  {h:'  <span class="cl-pl">bio:</span>     <span class="cl-str">"Nextflow / Wdl"</span><span class="cl-pl">,</span>'},
   {h:'  <span class="cl-pl">available:</span> <span class="cl-num">true</span><span class="cl-pl">,</span>'},
   {h:'<span class="cl-pl">}</span>'},
   {h:''},
@@ -206,23 +206,6 @@ function initReveal() {
 }
 
 
-/* ── 8. FAVICON (~/dev) ─────────────────────────────── */
-function initFavicon() {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">`
-    + `<rect width="64" height="64" rx="14" fill="#040912"/>`
-    + `<rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="#56cffc" stroke-opacity="0.22" stroke-width="1.5"/>`
-    + `<text x="50%" y="53%" dominant-baseline="middle" text-anchor="middle" `
-    + `font-family="'Courier New', monospace" font-size="17" font-weight="700" letter-spacing="-0.5">`
-    + `<tspan fill="#2dd4a0">~/</tspan><tspan fill="#56cffc">dev</tspan></text></svg>`;
-  const href = 'data:image/svg+xml,' + encodeURIComponent(svg);
-  document.querySelectorAll("link[rel~='icon']").forEach(l => l.remove());
-  const link = document.createElement('link');
-  link.rel = 'icon';
-  link.type = 'image/svg+xml';
-  link.href = href;
-  document.head.appendChild(link);
-}
-
 
 /* ── 9. THEME ───────────────────────────────────────── */
 function initTheme() {
@@ -285,7 +268,6 @@ function initVideoLightbox() {
 
 /* ── BOOT ────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-  initFavicon();
   initTheme();
   initNavbar();
   initHamburger();
