@@ -1,6 +1,0 @@
-backend/.env
-backend/venv/
-backend/__pycache__/
-*.pyc
-
-backend/seed-credentials.txt
