@@ -299,4 +299,5 @@ export default function AdminProjectCard({ email, project, pi }) {
       </div>
     </div>
   )
+  
 }
