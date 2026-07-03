@@ -25,7 +25,14 @@ def create_client():
         return jsonify(error='email already exists'), 409
     cid = Client.create(first, last, email,
                         d.get('company', ''), d.get('phone', ''), d.get('address', ''))
-    return jsonify(ok=True, email=email, clientId=cid)
+    mailed = False
+    if d.get('notify'):
+        try:
+            c = Client.by_email(email)
+            mailed = mailer.send_welcome(email, Client.display_name(c), cid)
+        except Exception as e:
+            print('[mail] welcome failed:', e)
+    return jsonify(ok=True, email=email, clientId=cid, mailed=mailed)
 
 
 @bp.get('/clients/<email>')

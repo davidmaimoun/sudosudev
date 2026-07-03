@@ -296,3 +296,32 @@ def send_payment_reminder(client_email, client_name, project_name,
              f'<div style="margin-top:6px;">Thank you!</div>')
     html = _shell("Payment reminder", intro, button=("VIEW YOUR PROJECT \u2192", _login_url()), accent='#fbbf24')
     return send(client_email, subject, body, html)
+
+def send_welcome(client_email, client_name, client_id):
+    """Sent once at client creation: their login credentials + how to sign in."""
+    login = _login_url()
+    subject = "[sudosudev] Welcome — your client access"
+    body = (f"Hi {client_name},\n\nWelcome! Your private client space is ready.\n\n"
+            f"Sign in here: {login}\n\n"
+            f"Your credentials:\n"
+            f"  Email      : {client_email}\n"
+            f"  Client ID  : {client_id}\n\n"
+            f"Keep your Client ID somewhere safe. If you ever lose it, you can "
+            f"generate a new one from the sign-in page (\"Forgot your ID?\").\n\n"
+            f"— sudosudev")
+    intro = (f"Hi <b style=\"color:#ddeeff;\">{client_name}</b>,<br><br>"
+             f"Welcome! Your private client space is ready — you can follow your "
+             f"project's progress, tasks and billing anytime."
+             f"<div style=\"margin:18px 0;padding:16px;background:#070e1d;border:1px solid rgba(86,207,252,.22);border-radius:6px;\">"
+             f"<div style=\"font-family:'Courier New',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#56cffc;margin-bottom:10px;\">Your credentials</div>"
+             f"<table style=\"width:100%;font-size:14px;color:#c4e2ff;\">"
+             f"<tr><td style=\"padding:4px 0;color:rgba(155,200,238,.7);\">Email</td>"
+             f"<td style=\"text-align:right;color:#ddeeff;\">{client_email}</td></tr>"
+             f"<tr><td style=\"padding:4px 0;color:rgba(155,200,238,.7);\">Client ID</td>"
+             f"<td style=\"text-align:right;\"><span style=\"font-family:'Courier New',monospace;font-size:17px;letter-spacing:3px;color:#56cffc;\">{client_id}</span></td></tr>"
+             f"</table></div>"
+             f"<span style=\"font-size:12px;color:rgba(155,200,238,.55);\">"
+             f"Keep your Client ID safe. If you lose it, you can regenerate one from the "
+             f"sign-in page via &ldquo;Forgot your ID?&rdquo;.</span>")
+    html = _shell("Welcome to sudosudev", intro, button=("SIGN IN →", login))
+    return send(client_email, subject, body, html)

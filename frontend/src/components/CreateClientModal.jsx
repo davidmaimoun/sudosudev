@@ -7,8 +7,9 @@ import { useAdmin } from '../store/admin.js'
 export default function CreateClientModal({ onClose }) {
   const createClient = useAdmin((s) => s.createClient)
   const [f, setF] = useState({ firstName: '', lastName: '', email: '', company: '', phone: '', address: '' })
+  const [notify, setNotify] = useState(true)
   const [busy, setBusy] = useState(false)
-  const [result, setResult] = useState(null)   // { email, clientId }
+  const [result, setResult] = useState(null)   // { email, clientId, mailed }
   const [copied, setCopied] = useState(false)
   const set = (k) => (e) => setF((s) => ({ ...s, [k]: e.target.value }))
 
@@ -18,9 +19,9 @@ export default function CreateClientModal({ onClose }) {
       return toast.error('First name, last name and email are required.')
     setBusy(true)
     try {
-      const r = await createClient(f)
+      const r = await createClient({ ...f, notify })
       setResult(r)
-      toast.success('Client created.')
+      toast.success(notify ? (r?.mailed ? 'Client created · welcome email sent.' : 'Client created (email off).') : 'Client created.')
     } catch (err) {
       toast.error(err?.response?.data?.error || 'Could not create client.')
     } finally {
@@ -39,6 +40,7 @@ export default function CreateClientModal({ onClose }) {
         <p className="text-sm text-dim mb-4 leading-relaxed">
           Give these to <b className="text-ink">{result.email}</b>. The Client ID is shown
           <b className="text-sky"> only once</b> — it’s stored encrypted.
+          {result.mailed && <span className="block mt-2 text-em">✓ A welcome email with these details was sent to the client.</span>}
         </p>
         <div className="bg-bg2 border border-linehi p-4 font-mono">
           <div className="text-[.6rem] text-faint tracking-wide uppercase mb-1">Client ID</div>
@@ -85,6 +87,10 @@ export default function CreateClientModal({ onClose }) {
             <input className="input" value={f.address} onChange={set('address')} placeholder="City…" />
           </div>
         </div>
+        <label className="flex items-start gap-2 mb-6 font-mono text-[.62rem] text-dim cursor-pointer select-none">
+          <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} className="accent-sky mt-0.5" />
+          <span>email the client a welcome message with their login details (email + Client ID)</span>
+        </label>
         <button type="submit" className="btn-connect" disabled={busy}>
           {busy ? 'CREATING…' : 'CREATE CLIENT →'}
         </button>
