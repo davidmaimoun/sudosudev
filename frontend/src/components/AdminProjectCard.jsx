@@ -5,6 +5,7 @@ import { useAdmin } from '../store/admin.js'
 import { toast } from 'sonner'
 import NotifyModal from './NotifyModal.jsx'
 import ActionNotifyModal from './ActionNotifyModal.jsx'
+import BillingCard from './BillingCard.jsx'
 
 const OPTS = [
   { key: 'todo',        label: 'Not started', Icon: Circle,       on: 'border-faint text-faint' },
@@ -287,6 +288,8 @@ export default function AdminProjectCard({ email, project, pi }) {
           <Trash2 size={14} />
         </button>
       </div>
+
+      {/* <BillingCard email={email} pi={pi} project={project} /> */}
 
       <div className="mt-5 space-y-2.5">
         {project.steps.map((s, si) => (

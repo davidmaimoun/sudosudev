@@ -70,7 +70,7 @@ export default function Workspace() {
         </div>
       )}
 
-      {projects.map((p, i) => <ProjectCard key={i} project={p} pi={i} />)}
+      {projects.map((p, i) => <ProjectCard key={i} project={p} pi={i} bank={workspace.bank || {}} />)}
 
       <div className="font-mono text-[.58rem] text-faint mt-8 text-center tracking-wide">
         sudosudev · your projects, updated as we build.

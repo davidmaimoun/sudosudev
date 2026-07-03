@@ -76,16 +76,80 @@ def regenerate_id(email):
 @require_admin
 def add_project(email):
     d = request.get_json(silent=True) or {}
-    ok = Client.add_project(email, d.get('name'), d.get('description'), d.get('steps'), d.get('url', ''))
-    return jsonify(ok=True) if ok else (jsonify(error='client not found'), 404)
+    billing = {'total': d.get('total'), 'currency': d.get('currency'), 'payments': []}
+    ok = Client.add_project(email, d.get('name'), d.get('description'),
+                            d.get('steps'), d.get('url', ''), billing)
+    if not ok:
+        return jsonify(error='client not found'), 404
+    # optional recap email on project creation
+    mailed = False
+    if d.get('notify'):
+        c = Client.by_email(email)
+        try:
+            p = c['projects'][-1]
+            total, paid, remaining, cur = Client.billing_summary(p)
+            mailed = mailer.notify_project_created(
+                c['email'], Client.display_name(c), p.get('name', ''),
+                p.get('description', ''), total, cur, len(p.get('steps', [])))
+        except Exception as e:
+            print('[mail] project-created notify failed:', e)
+    return jsonify(ok=True, mailed=mailed)
 
 
 @bp.patch('/clients/<email>/projects/<int:pi>')
 @require_admin
 def update_project(email, pi):
     d = request.get_json(silent=True) or {}
-    r = Client.update_project(email, pi, d.get('name'), d.get('description'), d.get('url'))
+    r = Client.update_project(email, pi, d.get('name'), d.get('description'), d.get('url'),
+                              total=d.get('total'), currency=d.get('currency'))
     return jsonify(ok=True) if r else (jsonify(error='not found or no change'), 404)
+
+
+# ── payments (billing) ──
+@bp.post('/clients/<email>/projects/<int:pi>/payments')
+@require_admin
+def add_payment(email, pi):
+    d = request.get_json(silent=True) or {}
+    ok = Client.add_payment(email, pi, d.get('label'), d.get('amount'),
+                            d.get('dueDate', ''), d.get('status', 'pending'))
+    return jsonify(ok=True) if ok else (jsonify(error='not found'), 404)
+
+
+@bp.patch('/clients/<email>/projects/<int:pi>/payments/<int:idx>')
+@require_admin
+def update_payment(email, pi, idx):
+    d = request.get_json(silent=True) or {}
+    r = Client.set_payment(email, pi, idx, label=d.get('label'), amount=d.get('amount'),
+                           status=d.get('status'), due_date=d.get('dueDate'))
+    return jsonify(ok=True) if r else (jsonify(error='not found'), 404)
+
+
+@bp.delete('/clients/<email>/projects/<int:pi>/payments/<int:idx>')
+@require_admin
+def delete_payment(email, pi, idx):
+    return jsonify(ok=True) if Client.delete_payment(email, pi, idx) else (jsonify(error='not found'), 404)
+
+
+@bp.post('/clients/<email>/projects/<int:pi>/payments/<int:idx>/remind')
+@require_admin
+def remind_payment(email, pi, idx):
+    c = Client.by_email(email)
+    if not c:
+        return jsonify(error='not found'), 404
+    pay = Client.get_payment(c, pi, idx)
+    if pay is None:
+        return jsonify(error='payment not found'), 404
+    p = c['projects'][pi]
+    total, paid, remaining, cur = Client.billing_summary(p)
+    try:
+        mailed = mailer.send_payment_reminder(
+            c['email'], Client.display_name(c), p.get('name', ''),
+            pay.get('label', ''), pay.get('amount', 0), cur,
+            pay.get('dueDate', ''), remaining)
+    except Exception as e:
+        print('[mail] payment reminder failed:', e)
+        mailed = False
+    return jsonify(ok=True, mailed=mailed)
 
 
 @bp.delete('/clients/<email>/projects/<int:pi>')

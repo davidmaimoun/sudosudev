@@ -46,8 +46,29 @@ export const useAdmin = create((set, get) => ({
   },
 
   async addProject(email, project) {
-    await api.post(`/admin/clients/${encodeURIComponent(email)}/projects`, project)
+    const { data } = await api.post(`/admin/clients/${encodeURIComponent(email)}/projects`, project)
     await get().openClient(email)
+    return data?.mailed === true
+  },
+
+  async addPayment(email, pi, payment) {
+    await api.post(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/payments`, payment)
+    await get().openClient(email)
+  },
+
+  async updatePayment(email, pi, idx, fields) {
+    await api.patch(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/payments/${idx}`, fields)
+    await get().openClient(email)
+  },
+
+  async deletePayment(email, pi, idx) {
+    await api.delete(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/payments/${idx}`)
+    await get().openClient(email)
+  },
+
+  async remindPayment(email, pi, idx) {
+    const { data } = await api.post(`/admin/clients/${encodeURIComponent(email)}/projects/${pi}/payments/${idx}/remind`)
+    return data?.mailed === true
   },
 
   async updateProject(email, pi, fields) {

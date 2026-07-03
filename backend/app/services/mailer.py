@@ -202,3 +202,97 @@ def send_new_client_id(client_email, client_name, client_id, app_url=None):
              f"<span style=\"font-size:12px;color:rgba(155,200,238,.55);\">Your previous ID no longer works.</span>")
     html = _shell("Your new access ID", intro, button=("SIGN IN →", _login_url()))
     return send(client_email, subject, body, html)
+
+# ── billing ──
+CURRENCY_SYMBOL = {'ILS': '₪', 'EUR': '€', 'USD': '$'}
+
+def _money(amount, currency='ILS'):
+    sym = CURRENCY_SYMBOL.get(currency, '')
+    try:
+        n = float(amount)
+    except (TypeError, ValueError):
+        n = 0.0
+    s = f"{n:,.2f}".rstrip('0').rstrip('.') if n % 1 else f"{int(n):,}"
+    return f"{sym}{s}"
+
+
+def notify_project_created(client_email, client_name, project_name, description,
+                           total, currency, steps_count):
+    subject = f"[sudosudev] New project — {project_name}"
+    total_str = _money(total, currency)
+    body = (f"Hi {client_name},\n\nWe've set up your project \"{project_name}\".\n\n"
+            f"  Steps planned : {steps_count}\n"
+            f"  Estimated cost: {total_str}\n")
+    if description:
+        body += f"\n{description}\n"
+    body += (f"\nThis estimate may vary depending on your needs along the way.\n\n"
+             f"Follow everything here: {_login_url()}\n\n— sudosudev")
+    desc_html = (f"<div style=\"margin-top:6px;font-size:13px;color:rgba(196,226,255,.7);\">{description}</div>") if description else ""
+    intro = (f"Hi <b style=\"color:#ddeeff;\">{client_name}</b>,<br><br>"
+             f"We've set up your project <b style=\"color:#ddeeff;\">{project_name}</b>.{desc_html}"
+             f"<div style=\"margin:16px 0;padding:16px;background:#070e1d;border:1px solid rgba(86,207,252,.22);border-radius:6px;\">"
+             f"<table style=\"width:100%;font-size:14px;color:#c4e2ff;\">"
+             f"<tr><td style=\"padding:3px 0;\">Steps planned</td><td style=\"text-align:right;color:#ddeeff;\">{steps_count}</td></tr>"
+             f"<tr><td style=\"padding:3px 0;\">Estimated cost</td><td style=\"text-align:right;color:#56cffc;font-weight:700;\">{total_str}</td></tr>"
+             f"</table></div>"
+             f"<span style=\"font-size:12px;color:rgba(155,200,238,.55);\">"
+             f"This estimate may vary depending on your needs along the way.</span>")
+    html = _shell("Your project is ready", intro, button=("FOLLOW YOUR PROJECT →", _login_url()))
+    return send(client_email, subject, body, html)
+
+
+def send_payment_reminder(client_email, client_name, project_name,
+                          label, amount, currency, due_date, remaining):
+    from flask import current_app
+    try:
+        bank = current_app.config.get('BANK', {})
+    except Exception:
+        bank = {}
+    amt = _money(amount, currency)
+    rem = _money(remaining, currency)
+    subject = f"[sudosudev] Payment reminder \u2014 {project_name}"
+    body = (f"Hi {client_name},\n\nA friendly reminder for a payment on \"{project_name}\":\n\n"
+            f"  {label}: {amt}\n")
+    if due_date:
+        body += f"  Due: {due_date}\n"
+    body += f"\n  Remaining balance: {rem}\n"
+    if bank:
+        body += ("\nBank transfer:\n"
+                 f"  Beneficiary : {bank.get('beneficiary','')}\n"
+                 f"  Bank        : {bank.get('bank','')}\n"
+                 f"  IBAN        : {bank.get('iban','')}\n"
+                 f"  SWIFT/BIC   : {bank.get('swift','')}\n"
+                 f"  Account     : {bank.get('account','')}\n"
+                 f"  Reference   : {project_name}\n")
+    body += "\nThank you!\n\n\u2014 sudosudev"
+
+    due_html = (f'<tr><td style="padding:3px 0;">Due</td><td style="text-align:right;color:#ddeeff;">{due_date}</td></tr>') if due_date else ""
+    bank_html = ""
+    if bank:
+        def row(k, v):
+            return (f'<tr><td style="padding:2px 0;color:rgba(155,200,238,.6);">{k}</td>'
+                    f'<td style="text-align:right;color:#ddeeff;">{v}</td></tr>')
+        bank_html = (
+            '<div style="margin:16px 0;padding:14px 16px;background:#070e1d;border:1px solid rgba(86,207,252,.18);border-radius:6px;">'
+            '<div style="font-family:\'Courier New\',monospace;font-size:11px;color:#56cffc;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Bank transfer</div>'
+            '<table style="width:100%;font-size:13px;color:#c4e2ff;font-family:\'Courier New\',monospace;">'
+            + row('Beneficiary', bank.get('beneficiary',''))
+            + row('Bank', bank.get('bank',''))
+            + row('IBAN', bank.get('iban',''))
+            + row('SWIFT/BIC', bank.get('swift',''))
+            + row('Account', bank.get('account',''))
+            + row('Reference', project_name)
+            + '</table></div>')
+    intro = (f'Hi <b style="color:#ddeeff;">{client_name}</b>,<br><br>'
+             f'A friendly reminder for a payment on <b style="color:#ddeeff;">{project_name}</b>:'
+             f'<div style="margin:16px 0;padding:16px;background:#070e1d;border-left:3px solid #fbbf24;border-radius:0 6px 6px 0;">'
+             f'<table style="width:100%;font-size:14px;color:#c4e2ff;">'
+             f'<tr><td style="padding:3px 0;">{label}</td><td style="text-align:right;color:#fbbf24;font-weight:700;">{amt}</td></tr>'
+             f'{due_html}'
+             f'<tr><td style="padding:3px 0;border-top:1px solid rgba(255,255,255,.08);">Remaining balance</td>'
+             f'<td style="text-align:right;color:#ddeeff;border-top:1px solid rgba(255,255,255,.08);">{rem}</td></tr>'
+             f'</table></div>'
+             f'{bank_html}'
+             f'<div style="margin-top:6px;">Thank you!</div>')
+    html = _shell("Payment reminder", intro, button=("VIEW YOUR PROJECT \u2192", _login_url()), accent='#fbbf24')
+    return send(client_email, subject, body, html)

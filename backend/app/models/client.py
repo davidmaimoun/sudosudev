@@ -50,6 +50,16 @@ def verify(email, client_id):
     return None
 
 def public(doc):
+    from flask import current_app
+    projects = doc.get('projects', [])
+    for p in projects:
+        if 'billing' not in p:
+            p['billing'] = {'total': 0.0, 'currency': 'ILS', 'payments': []}
+    bank = {}
+    try:
+        bank = current_app.config.get('BANK', {})
+    except Exception:
+        pass
     return {
         'client': {
             'name': display_name(doc),
@@ -57,7 +67,8 @@ def public(doc):
             'lastName': doc.get('lastName', ''),
             'company': doc.get('company', ''),
         },
-        'projects': doc.get('projects', []),
+        'projects': projects,
+        'bank': bank,
     }
 
 
@@ -121,23 +132,116 @@ def normalize_substeps(subs):
         })
     return out
 
-def add_project(email, name, description, steps, url=''):
+VALID_CURRENCY = ('ILS', 'EUR', 'USD')
+
+def _num(v, default=0.0):
+    try:
+        return round(float(v), 2)
+    except (TypeError, ValueError):
+        return default
+
+def normalize_billing(b):
+    b = b or {}
+    cur = b.get('currency') if b.get('currency') in VALID_CURRENCY else 'ILS'
+    return {
+        'total': _num(b.get('total'), 0.0),
+        'currency': cur,
+        'payments': normalize_payments(b.get('payments')),
+    }
+
+def normalize_payments(pays):
+    out = []
+    for p in pays or []:
+        out.append({
+            'label': (p.get('label') or '').strip(),
+            'amount': _num(p.get('amount'), 0.0),
+            'status': p.get('status') if p.get('status') in ('paid', 'pending') else 'pending',
+            'dueDate': (p.get('dueDate') or '').strip(),
+            'paidDate': (p.get('paidDate') or '').strip(),
+        })
+    return out
+
+def add_project(email, name, description, steps, url='', billing=None):
     project = {'name': (name or '').strip(),
                'description': (description or '').strip(),
                'url': (url or '').strip(),
+               'billing': normalize_billing(billing),
                'steps': normalize_steps(steps)}
     return extensions.db.clients.update_one(
         {'email': email.lower(), 'role': 'client'},
         {'$push': {'projects': project}}).matched_count
 
-def update_project(email, pi, name=None, description=None, url=None):
+def update_project(email, pi, name=None, description=None, url=None,
+                   total=None, currency=None):
     fields = {}
     if name        is not None: fields[f'projects.{pi}.name'] = name.strip()
     if description is not None: fields[f'projects.{pi}.description'] = description.strip()
     if url         is not None: fields[f'projects.{pi}.url'] = url.strip()
+    if total       is not None: fields[f'projects.{pi}.billing.total'] = _num(total, 0.0)
+    if currency in VALID_CURRENCY: fields[f'projects.{pi}.billing.currency'] = currency
     if not fields: return 0
     return extensions.db.clients.update_one(
         {'email': email.lower(), 'role': 'client'}, {'$set': fields}).matched_count
+
+
+# ── payments (admin) ──
+def _project(email, pi):
+    c = by_email(email)
+    if not c: return None, None
+    projects = c.get('projects', [])
+    if pi < 0 or pi >= len(projects): return c, None
+    return c, projects[pi]
+
+def add_payment(email, pi, label, amount, due_date='', status='pending'):
+    pay = {'label': (label or '').strip(), 'amount': _num(amount, 0.0),
+           'status': status if status in ('paid', 'pending') else 'pending',
+           'dueDate': (due_date or '').strip(), 'paidDate': ''}
+    # ensure billing exists (older projects created before billing)
+    c, proj = _project(email, pi)
+    if proj is None: return None
+    if 'billing' not in proj:
+        extensions.db.clients.update_one(
+            {'email': email.lower(), 'role': 'client'},
+            {'$set': {f'projects.{pi}.billing': {'total': 0.0, 'currency': 'ILS', 'payments': []}}})
+    return extensions.db.clients.update_one(
+        {'email': email.lower(), 'role': 'client'},
+        {'$push': {f'projects.{pi}.billing.payments': pay}}).matched_count
+
+def set_payment(email, pi, idx, label=None, amount=None, status=None, due_date=None):
+    fields = {}
+    base = f'projects.{pi}.billing.payments.{idx}'
+    if label  is not None: fields[f'{base}.label'] = label.strip()
+    if amount is not None: fields[f'{base}.amount'] = _num(amount, 0.0)
+    if due_date is not None: fields[f'{base}.dueDate'] = due_date.strip()
+    if status in ('paid', 'pending'):
+        fields[f'{base}.status'] = status
+        fields[f'{base}.paidDate'] = datetime.now(timezone.utc).strftime('%Y-%m-%d') if status == 'paid' else ''
+    if not fields: return 0
+    return extensions.db.clients.update_one(
+        {'email': email.lower(), 'role': 'client'}, {'$set': fields}).matched_count
+
+def delete_payment(email, pi, idx):
+    c, proj = _project(email, pi)
+    if proj is None: return None
+    pays = proj.get('billing', {}).get('payments', [])
+    if idx < 0 or idx >= len(pays): return None
+    pays.pop(idx)
+    extensions.db.clients.update_one(
+        {'_id': c['_id']}, {'$set': {f'projects.{pi}.billing.payments': pays}})
+    return True
+
+def get_payment(doc, pi, idx):
+    try:
+        return doc['projects'][pi]['billing']['payments'][idx]
+    except (IndexError, KeyError, TypeError):
+        return None
+
+def billing_summary(project):
+    """Return (total, paid, remaining, currency) for a project dict."""
+    b = project.get('billing') or {}
+    total = _num(b.get('total'), 0.0)
+    paid = sum(_num(p.get('amount'), 0.0) for p in b.get('payments', []) if p.get('status') == 'paid')
+    return total, round(paid, 2), round(total - paid, 2), b.get('currency', 'ILS')
 
 def delete_project(email, pi):
     c = by_email(email)

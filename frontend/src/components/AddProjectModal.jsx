@@ -11,6 +11,9 @@ export default function AddProjectModal({ email, onClose }) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [url, setUrl] = useState('')
+  const [total, setTotal] = useState('')
+  const [currency, setCurrency] = useState('ILS')
+  const [notify, setNotify] = useState(true)
   const [steps, setSteps] = useState([blankStep(), blankStep()])
   const [busy, setBusy] = useState(false)
 
@@ -28,8 +31,11 @@ export default function AddProjectModal({ email, onClose }) {
     setBusy(true)
     try {
       // step 1 becomes in_progress automatically on the backend
-      await addProject(email, { name, description, url, steps: clean })
-      toast.success('Project added.')
+      const mailed = await addProject(email, {
+        name, description, url, steps: clean,
+        total: total === '' ? 0 : Number(total), currency, notify,
+      })
+      toast.success(notify ? (mailed ? 'Project added · recap emailed.' : 'Project added (email off).') : 'Project added.')
       onClose()
     } catch {
       toast.error('Could not add project.')
@@ -53,6 +59,30 @@ export default function AddProjectModal({ email, onClose }) {
           <label className="label">Live URL <span className="text-faint normal-case">(optional)</span></label>
           <input className="input" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://staging.tataphone.co.il" />
         </div>
+
+        <div className="mb-5 flex gap-2">
+          <div className="flex-1">
+            <label className="label">Estimated total <span className="text-faint normal-case">(optional)</span></label>
+            <input className="input" type="number" min="0" step="any" value={total}
+              onChange={(e) => setTotal(e.target.value)} placeholder="5000" />
+          </div>
+          <div>
+            <label className="label">Currency</label>
+            <div className="flex border border-line">
+              {['ILS', 'EUR', 'USD'].map((c) => (
+                <button key={c} type="button" onClick={() => setCurrency(c)}
+                  className={`px-3 py-2 font-mono text-[.6rem] ${currency === c ? 'bg-sky/15 text-sky' : 'text-faint'}`}>
+                  {c === 'ILS' ? '₪' : c === 'EUR' ? '€' : '$'}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <label className="flex items-center gap-2 mb-6 font-mono text-[.62rem] text-dim cursor-pointer select-none">
+          <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} className="accent-sky" />
+          email the client a project recap (summary + estimated cost)
+        </label>
 
         <div className="label mb-2">Steps <span className="text-faint normal-case">(step 1 starts “in progress”)</span></div>
         <div className="space-y-2 mb-3">
