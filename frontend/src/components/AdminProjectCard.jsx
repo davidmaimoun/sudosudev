@@ -289,7 +289,7 @@ export default function AdminProjectCard({ email, project, pi }) {
         </button>
       </div>
 
-      {/* <BillingCard email={email} pi={pi} project={project} /> */}
+      <BillingCard email={email} pi={pi} project={project} />
 
       <div className="mt-5 space-y-2.5">
         {project.steps.map((s, si) => (
