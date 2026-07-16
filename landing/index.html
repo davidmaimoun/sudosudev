@@ -41,6 +41,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css?v=4" />
+  <link rel="stylesheet" href="css/forge.css?v=5" />
  
   <!-- ── Structured data (rich results) ────────────── -->
   <script type="application/ld+json">
@@ -57,6 +58,7 @@
     "sameAs": ["https://github.com/davidmaimoun"]
   }
   </script>
+  
 </head>
 <body>
 
@@ -92,6 +94,7 @@
       <li><a href="#stack"><span class="ln">02.</span> stack</a></li>
       <li><a href="#about"><span class="ln">03.</span> whoami</a></li>
       <li><a href="#contact"><span class="ln">04.</span> contact</a></li>
+      <li><a href="#forge"><span class="ln"><span class="nav-live-dot"></span></span> live demo</a></li>
     </ul>
 
     <div class="nav-right">
@@ -129,6 +132,7 @@
       <li><a href="#stack"          class="drawer-link"><span class="ln">02</span>Stack</a></li>
       <li><a href="#about"          class="drawer-link"><span class="ln">03</span>Whoami</a></li>
       <li><a href="#contact"        class="drawer-link"><span class="ln">04</span>Contact</a></li>
+      <li><a href="#forge" class="drawer-link"><span class="ln"><span class="nav-live-dot"></span></span>Live demo</a></li>
     </ul>
   </div>
 
@@ -451,6 +455,7 @@
       </div>
     </div>
 
+    
     <!-- ─────────────── SOLUTION 04 · SHOWCASE SITES ─────────────── -->
     <div class="solution">
       <div class="solution-head reveal">
@@ -610,6 +615,95 @@
 
   </section>
 
+   
+
+  
+<section id="forge">
+  <div class="fg-wrap">
+ 
+    <!-- eyebrow / label with pulsing live badge -->
+    <div class="fg-label">
+      <span class="fg-live-badge"><span class="fg-rec-dot"></span> live demo</span>
+      <span class="fg-l-line"></span>
+      <span class="fg-l-txt">try it →</span>
+    </div>
+ 
+    <div class="fg-intro">
+      <h2 class="fg-h">Your site. <em>Right now.</em></h2>
+      <p class="fg-sub">Pick your industry, type your business name — and watch it assemble in front of you. Not an imaginary mockup: your name, your trade, already in place.</p>
+      <div class="fg-draft-note"><b>Heads-up:</b> this is a 60-second auto-draft — your real site will be sharper, faster and fully custom.</div>
+    </div>
+ 
+    <div class="fg-grid">
+ 
+      <!-- ─────────── CONTROL PANEL ─────────── -->
+      <div class="fg-panel">
+        <div class="fg-step">
+          <span class="fg-step-n">01</span>
+          <span class="fg-step-t">Your industry</span>
+        </div>
+        <div class="fg-chips" role="radiogroup" aria-label="Choose your industry">
+          <button class="fg-chip is-active" data-ind="resto"  role="radio" aria-checked="true">
+            <span class="fg-chip-ico">🍽</span><span>Restaurant</span>
+          </button>
+          <button class="fg-chip" data-ind="shop" role="radio" aria-checked="false">
+            <span class="fg-chip-ico">🛍</span><span>Shop</span>
+          </button>
+          <button class="fg-chip" data-ind="travel" role="radio" aria-checked="false">
+            <span class="fg-chip-ico">✈</span><span>Travel</span>
+          </button>
+          <button class="fg-chip" data-ind="pro" role="radio" aria-checked="false">
+            <span class="fg-chip-ico">◆</span><span>Business site</span>
+          </button>
+        </div>
+ 
+        <div class="fg-step fg-step-2">
+          <span class="fg-step-n">02</span>
+          <span class="fg-step-t">Your business name</span>
+        </div>
+        <div class="fg-input-row">
+          <span class="fg-input-pre">~/</span>
+          <input id="fgName" class="fg-input" type="text" autocomplete="off" spellcheck="false"
+                 placeholder="The Cedar" aria-label="Your business name" maxlength="28" />
+        </div>
+ 
+        <button id="fgGo" class="fg-go">
+          <span class="fg-go-bolt">⚡</span> Generate my preview
+        </button>
+ 
+        <p class="fg-note">Instant preview · free · no signup</p>
+      </div>
+ 
+      <!-- ─────────── BROWSER MOCKUP ─────────── -->
+      <div class="fg-stage">
+        <button class="fg-modal-close" id="fgModalClose" aria-label="Close preview">✕</button>
+        <div class="fg-browser">
+          <div class="fg-bar">
+            <span class="fg-dot r"></span><span class="fg-dot y"></span><span class="fg-dot g"></span>
+            <span class="fg-url" id="fgUrl">www.the-cedar.co.il</span>
+            <span class="fg-live">● live</span>
+          </div>
+          <div class="fg-viewport" id="fgViewport"><!-- rendered preview / compile log --></div>
+          <span class="fg-draft-tag"><span class="d"></span> quick draft · not the final build</span>
+        </div>
+ 
+        <!-- conversion hook -->
+        <div class="fg-hook" id="fgHook">
+          <p class="fg-hook-txt">This is <strong id="fgHookName">your</strong> site. I'll put it live <em>for real</em> — fully working, in your name.</p>
+          <div class="fg-hook-cta">
+            <a id="fgWa" class="fg-btn-wa" href="#" target="_blank" rel="noopener">
+              <span>Chat on WhatsApp</span>
+            </a>
+            <a id="fgMail" class="fg-btn-mail" href="#">By email</a>
+          </div>
+        </div>
+      </div>
+ 
+    </div>
+  </div>
+</section>
+ 
+ 
 
   <!-- ═══ STACK ═══ -->
   <section id="stack" class="section stack-section">
@@ -774,6 +868,13 @@
     </div>
   </footer>
 
+  <!-- Sticky WhatsApp button -->
+  <a class="wa-fab" href="https://wa.me/972527810255" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.044zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+    <span class="wa-label">WhatsApp</span>
+  </a>
+
   <script src="js/main.js?v=4"></script>
+  <script src="js/forge.js" defer></script>
 </body>
 </html>
