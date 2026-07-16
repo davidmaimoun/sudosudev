@@ -437,7 +437,7 @@
   @keyframes fg-modal-in{from{opacity:0;transform:translateY(18px) scale(.965);}to{opacity:1;transform:none;}}
   
   /* navbar "live demo" — mirrors the other nav links; dot sits where the number is */
-  .nav-live-dot{display:inline-block;vertical-align:middle;width:8px;height:8px;border-radius:50%;background:#2dd4a0;box-shadow:0 0 0 0 rgba(45,212,160,.55);animation:navlive 1.6s ease-out infinite;flex:none;}
+  .nav-live-dot{display:inline-block;vertical-align:middle;position:relative;top:-2px;margin-right:3px;width:8px;height:8px;border-radius:50%;background:#2dd4a0;box-shadow:0 0 0 0 rgba(45,212,160,.55);animation:navlive 1.6s ease-out infinite;flex:none;}
   @keyframes navlive{0%{box-shadow:0 0 0 0 rgba(45,212,160,.55);}70%{box-shadow:0 0 0 7px rgba(45,212,160,0);}100%{box-shadow:0 0 0 0 rgba(45,212,160,0);}}
   
   /* sticky WhatsApp floating button (global) */
