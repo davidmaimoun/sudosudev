@@ -228,11 +228,11 @@
   
   /* ── warm pastel palettes (one family each, kept distinct) ── */
   #forge .fp.p-resto{
-    --pf-bg:#fbf3ea;--pf-alt:#f6e7d7;--pf-navbg:#fffaf3;--pf-herobg:linear-gradient(180deg,#f6e7d7,#fbf3ea);
-    --pf-card:#fffdfa;--pf-thumb:linear-gradient(135deg,#f2ddc6,#e9c9a8);--pf-acc:#c9663e;--pf-acc-soft:#f5ddce;
-    --pf-ink:#33241a;--pf-mut:#957f6c;--pf-hair:rgba(201,102,62,.16);--pf-btnink:#fff;
-    --pf-ctaband:linear-gradient(120deg,#c9663e,#e0925f);--pf-ctaink:#fff;
-    --pf-disp:Georgia,'Times New Roman',serif;--pf-body:Georgia,serif;--pf-rad:12px;--pf-ls:.005em;--pf-hw:700;}
+    --pf-bg:#141011;--pf-alt:#1c1416;--pf-navbg:#181113;--pf-herobg:linear-gradient(180deg,#1c1416,#141011);
+    --pf-card:#1e1618;--pf-thumb:linear-gradient(135deg,#2a1a1e,#181012);--pf-acc:#b83b4d;--pf-acc-soft:#3a2126;
+    --pf-field:#241a1d;--pf-ink:#f3e8e1;--pf-mut:#ab9990;--pf-hair:rgba(212,168,95,.16);--pf-btnink:#fff;
+    --pf-ctaband:linear-gradient(120deg,#7d2733,#ab3547);--pf-ctaink:#fff;
+    --pf-disp:Georgia,'Times New Roman',serif;--pf-body:Georgia,serif;--pf-rad:10px;--pf-ls:.005em;--pf-hw:700;}
   #forge .fp.p-shop{
     --pf-bg:#fdf4f6;--pf-alt:#fae6ee;--pf-navbg:#fffbfc;--pf-herobg:linear-gradient(180deg,#fae6ee,#fdf4f6);
     --pf-card:#ffffff;--pf-thumb:linear-gradient(135deg,#f8dbe6,#efd3f0);--pf-acc:#d76a8f;--pf-acc-soft:#f8dce6;
@@ -352,7 +352,7 @@
   #forge .fp-field{display:flex;flex-direction:column;gap:6px;margin-bottom:13px;}
   #forge .fp-field label{font-size:.68rem;font-weight:600;color:var(--pf-mut);text-transform:uppercase;letter-spacing:.09em;}
   #forge .fp-form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  #forge .fp-input2,#forge .fp-select,#forge .fp-area{width:100%;border:1px solid var(--pf-hair);background:#fff;border-radius:10px;padding:11px 12px;font-family:var(--pf-body);font-size:.86rem;color:var(--pf-ink);outline:none;transition:border-color .2s,box-shadow .2s;}
+  #forge .fp-input2,#forge .fp-select,#forge .fp-area{width:100%;border:1px solid var(--pf-hair);background:var(--pf-field,#fff);border-radius:10px;padding:11px 12px;font-family:var(--pf-body);font-size:.86rem;color:var(--pf-ink);outline:none;transition:border-color .2s,box-shadow .2s;}
   #forge .fp-input2::placeholder,#forge .fp-area::placeholder{color:#b9a89b;}
   #forge .fp-input2:focus,#forge .fp-select:focus,#forge .fp-area:focus{border-color:var(--pf-acc);box-shadow:0 0 0 3px var(--pf-acc-soft);}
   #forge .fp-area{resize:none;min-height:78px;line-height:1.5;}
@@ -370,7 +370,7 @@
   /* ═══════════ v4: color variety · hero rating · rich footer · ribbon · draft/live ═══════════ */
   
   /* palette variety refresh + duotone accents + tinted hero scrims */
-  #forge .fp.p-resto{--pf-acc2:#e0a35f;--pf-scrim:linear-gradient(175deg,rgba(70,30,12,.30),rgba(38,18,8,.74));}
+  #forge .fp.p-resto{--pf-acc2:#d4a85f;--pf-scrim:linear-gradient(175deg,rgba(24,8,11,.42),rgba(10,4,6,.82));}
   #forge .fp.p-shop{--pf-acc:#c65b86;--pf-acc2:#8e6bb0;--pf-acc-soft:#f4d7e5;--pf-ctaband:linear-gradient(120deg,#c65b86,#9a6cb2);--pf-scrim:linear-gradient(175deg,rgba(70,25,55,.30),rgba(38,18,42,.72));}
   #forge .fp.p-travel{--pf-acc2:#2c8f93;--pf-scrim:linear-gradient(175deg,rgba(72,36,16,.28),rgba(28,26,32,.72));}
   #forge .fp.p-pro{--pf-bg:#f6f4ee;--pf-alt:#eae7dc;--pf-navbg:#fffdf8;--pf-herobg:linear-gradient(180deg,#eae7dc,#f6f4ee);--pf-thumb:linear-gradient(135deg,#d9e0d3,#c3d0bf);--pf-acc:#2f6f5e;--pf-acc2:#b0894a;--pf-acc-soft:#dce7df;--pf-hair:rgba(47,111,94,.14);--pf-ctaband:linear-gradient(120deg,#2f6f5e,#5a9a7f);--pf-ink:#22261f;--pf-mut:#7a8478;--pf-scrim:linear-gradient(175deg,rgba(15,45,35,.34),rgba(12,30,24,.74));}
@@ -446,3 +446,24 @@
   .wa-fab svg{width:22px;height:22px;flex:none;}
   @media (max-width:520px){ .wa-fab{padding:14px;border-radius:50%;gap:0;} .wa-fab .wa-label{display:none;} }
   @media (prefers-reduced-motion:reduce){ .nav-live-dot{animation:none;} #forge.fg-modal-open .fg-stage,#forge.fg-modal-open .fg-browser,#forge.fg-modal-open .fg-hook,#forge .fg-modal-close{animation:none;} }
+  
+  /* ── shop feature cards: gradient upgrade (scoped to shop only) ── */
+  #forge .fp.p-shop .fp-feat{background:linear-gradient(180deg,#ffffff,#fdf3f8);border:1px solid var(--pf-hair);border-radius:16px;position:relative;overflow:hidden;padding:24px 18px 22px;}
+  #forge .fp.p-shop .fp-feat::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pf-acc),var(--pf-acc2));}
+  #forge .fp.p-shop .fp-feat:hover{transform:translateY(-5px);box-shadow:0 22px 44px -22px rgba(198,91,134,.5);}
+  #forge .fp.p-shop .fp-badge{background:linear-gradient(135deg,var(--pf-acc),var(--pf-acc2));color:#fff;box-shadow:0 10px 22px -8px rgba(198,91,134,.55);}
+  #forge .fp.p-shop .fp-feat .fp-cn{background:linear-gradient(90deg,var(--pf-acc),var(--pf-acc2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;font-weight:700;}
+  
+  /* ── travel feature cards: gradient upgrade (coral → teal, scoped to travel) ── */
+  #forge .fp.p-travel .fp-feat{background:linear-gradient(180deg,#ffffff,#fdf0e6);border:1px solid var(--pf-hair);border-radius:14px;position:relative;overflow:hidden;padding:24px 18px 22px;}
+  #forge .fp.p-travel .fp-feat::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pf-acc),var(--pf-acc2));}
+  #forge .fp.p-travel .fp-feat:hover{transform:translateY(-5px);box-shadow:0 22px 44px -22px rgba(224,122,78,.5);}
+  #forge .fp.p-travel .fp-badge{background:linear-gradient(135deg,var(--pf-acc),var(--pf-acc2));color:#fff;box-shadow:0 10px 22px -8px rgba(224,122,78,.55);}
+  #forge .fp.p-travel .fp-feat .fp-cn{background:linear-gradient(90deg,var(--pf-acc),var(--pf-acc2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;font-weight:700;}
+  
+  /* ── business "how we work" steps: gradient upgrade (emerald → gold, scoped to pro) ── */
+  #forge .fp.p-pro .fp-feat{background:linear-gradient(180deg,#ffffff,#f3f0e8);border:1px solid var(--pf-hair);border-radius:14px;position:relative;overflow:hidden;padding:24px 18px 22px;}
+  #forge .fp.p-pro .fp-feat::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pf-acc),var(--pf-acc2));}
+  #forge .fp.p-pro .fp-feat:hover{transform:translateY(-5px);box-shadow:0 22px 44px -22px rgba(47,111,94,.45);}
+  #forge .fp.p-pro .fp-badge{background:linear-gradient(135deg,var(--pf-acc),var(--pf-acc2));color:#fff;box-shadow:0 10px 22px -8px rgba(47,111,94,.5);}
+  #forge .fp.p-pro .fp-feat .fp-cn{background:linear-gradient(90deg,var(--pf-acc),var(--pf-acc2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;font-weight:700;}

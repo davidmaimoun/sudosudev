@@ -54,7 +54,7 @@
       var slug = function (s) { return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'my-site'; };
   
       function img(key, kw, w, h, lock) {
-        var local = IMG_LOCAL_DIR + key + '.jpg';
+        var local = IMG_LOCAL_DIR + key + '.webp';
         var fb1 = 'https://loremflickr.com/' + w + '/' + h + '/' + encodeURIComponent(kw) + '?lock=' + lock;
         var fb2 = 'https://picsum.photos/seed/' + encodeURIComponent(key) + '/' + w + '/' + h;
         return '<img class="fp-img" loading="lazy" alt="" src="' + local + '" data-fb1="' + fb1 + '" data-fb2="' + fb2 + '">';
