@@ -232,7 +232,7 @@
     --pf-card:#1e1618;--pf-thumb:linear-gradient(135deg,#2a1a1e,#181012);--pf-acc:#b83b4d;--pf-acc-soft:#3a2126;
     --pf-field:#241a1d;--pf-ink:#f3e8e1;--pf-mut:#ab9990;--pf-hair:rgba(212,168,95,.16);--pf-btnink:#fff;
     --pf-ctaband:linear-gradient(120deg,#7d2733,#ab3547);--pf-ctaink:#fff;
-    --pf-disp:'Playfair Display',Georgia,serif;--pf-body:'EB Garamond',Georgia,serif;--pf-rad:10px;--pf-ls:.01em;--pf-hw:700;}
+    --pf-disp:'Fraunces',Georgia,serif;--pf-body:'Fraunces',Georgia,serif;--pf-rad:10px;--pf-ls:0;--pf-hw:700;}
   #forge .fp.p-shop{
     --pf-bg:#fdf4f6;--pf-alt:#fae6ee;--pf-navbg:#fffbfc;--pf-herobg:linear-gradient(180deg,#fae6ee,#fdf4f6);
     --pf-card:#ffffff;--pf-thumb:linear-gradient(135deg,#f8dbe6,#efd3f0);--pf-acc:#d76a8f;--pf-acc-soft:#f8dce6;
