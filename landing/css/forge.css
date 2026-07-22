@@ -17,9 +17,9 @@
     --fg-mono:'Space Mono',monospace;
     --fg-disp:'Space Grotesk',sans-serif;
     position:relative;
-    max-width:1180px;
+    max-width:1200px;
     margin:0 auto;
-    padding:40px 24px 20px;
+    padding:6.5rem 3rem;
     box-sizing:border-box;
     font-family:var(--fg-disp);
     color:var(--fg-ink);
@@ -42,7 +42,6 @@
   #forge .fg-panel{
     background:linear-gradient(180deg,var(--fg-panel),#070d14);
     border:1px solid var(--fg-line);border-radius:16px;padding:24px 22px;
-    position:sticky;top:24px;
   }
   #forge .fg-step{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
   #forge .fg-step-2{margin-top:26px;}
