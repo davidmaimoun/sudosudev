@@ -47,7 +47,8 @@
 html{scroll-behavior:smooth;}
 body{
   color:var(--text);
-  background:radial-gradient(120% 80% at 50% 0%, #0a1428 0%, #070e1d 40%, #040912 100%) fixed;
+  /* background:radial-gradient(120% 80% at 50% 0%, #060c18 0%, #040912 40%, #02050b 100%) fixed; */
+  background:radial-gradient(120% 80% at 50% 0%, #081020 0%, #050b17 40%, #03060d 100%) fixed;
 
   font-family:var(--font-sans);font-size:17px;line-height:1.7;
   overflow-x:hidden;transition:background .45s,color .45s;
