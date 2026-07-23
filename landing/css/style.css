@@ -109,6 +109,8 @@ body{
 .nav-logo{
   font-family:var(--font-mono);font-size:1.05rem;letter-spacing:1px;
   color:var(--text);white-space:nowrap;
+  text-decoration:none; 
+  cursor:pointer;
 }
 .logo-prompt{color:var(--text-faint);}
 [data-theme="dark"]  .logo-sudo{color:var(--sky);}
@@ -206,11 +208,11 @@ body{
   position:relative;min-height:100vh;overflow:hidden;
   display:flex;align-items:center;padding:80px 0 60px;
 }
-.hero-term-bg{
-  position:absolute;inset:0;z-index:0;
-  padding:60px 3rem 2rem;display:flex;flex-direction:column;gap:2px;
-  overflow:hidden;pointer-events:none;opacity:.065;
-  font-family:var(--font-mono);font-size:11px;line-height:1.9;color:var(--sky);
+.term-bg{
+  position:fixed; inset:0; z-index:0;   /* PAS -1 — voir plus bas */
+  padding:60px 3rem 2rem; display:flex; flex-direction:column; gap:2px;
+  overflow:hidden; pointer-events:none; user-select:none; opacity:.05;
+  font-family:var(--font-mono); font-size:11px; line-height:1.9; color:var(--sky);
 }
 .tbl{display:block;white-space:nowrap;}
 .tbl.g{color:var(--em);} .tbl.d{opacity:.5;}
@@ -635,6 +637,9 @@ footer{
   .about-visual{order:-1;}
 }
 
+@media (max-width:600px){
+  .about-facts{ display:none; }
+}
 /* ── ROUNDED TOP CORNERS (windows) ───────────────────── */
 .mockup-screen{border-radius:8px 8px 0 0;overflow:hidden;}
 .code-window{border-radius:8px 8px 0 0;}   /* .code-window already clips overflow */

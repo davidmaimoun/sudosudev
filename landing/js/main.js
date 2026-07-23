@@ -4,9 +4,10 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 
 /* ── 1. TERMINAL BG ─────────────────────────────────── */
 (function buildTermBg() {
-  const c = document.getElementById('termBg');
-  if (!c) return;
-  const LINES = [
+  const boxes = document.querySelectorAll('#termBg, .term-bg');
+  if (!boxes.length) return;
+
+  const DEFAULT = [
     {t:'d',v:'$ whoami'},{t:'g',v:'fullstack_engineer'},
     {t:'d',v:'$ git log --oneline -5'},
     {t:'g',v:'a3f8c12 feat: websocket real-time layer'},
@@ -24,11 +25,37 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
     {t:'g',v:'64 bytes — time=1.2ms'},
     {t:'d',v:'$ uptime'},{t:'g',v:'99.98% — 247 days, 14:32:11'},
   ];
-  [...LINES,...LINES,...LINES].forEach(({t,v}) => {
-    const el = document.createElement('span');
-    el.className = 'tbl ' + (t === 'g' ? 'g' : 'd');
-    el.textContent = v;
-    c.appendChild(el);
+
+  const PENTEST = [
+    {t:'d',v:'$ whoami'},{t:'g',v:'www-data'},
+    {t:'d',v:'$ id'},{t:'g',v:'uid=33(www-data) gid=33(www-data)'},
+    {t:'d',v:'$ uname -a'},{t:'g',v:'Linux target 5.15.0 x86_64 GNU/Linux'},
+    {t:'d',v:'$ nmap -sV -p- 10.0.0.5'},
+    {t:'g',v:'22/tcp  open  ssh    OpenSSH 8.9'},
+    {t:'g',v:'80/tcp  open  http   nginx 1.24'},
+    {t:'g',v:'5432/tcp open  postgresql 15.2'},
+    {t:'d',v:'$ sudo -l'},{t:'g',v:'(ALL : ALL) NOPASSWD: /usr/bin/find'},
+    {t:'d',v:'$ find . -exec /bin/sh -p \\; -quit'},
+    {t:'d',v:'$ linpeas.sh | grep -i "cve"'},
+    {t:'g',v:'[+] CVE-2021-4034 (pwnkit) — likely vulnerable'},
+    {t:'d',v:'$ ./exploit --target=pkexec'},
+    {t:'g',v:'[*] triggering polkit race condition...'},
+    {t:'g',v:'[+] spawning root shell'},
+    {t:'d',v:'# whoami'},{t:'g',v:'root'},
+    {t:'d',v:'# id'},{t:'g',v:'uid=0(root) gid=0(root) groups=0(root)'},
+    {t:'d',v:'# sudo su -'},{t:'g',v:'✓ privilege escalation complete'},
+    {t:'d',v:'# cat /root/flag.txt'},{t:'g',v:'access_granted{welcome_to_sudosu}'},
+  ];
+
+  boxes.forEach(box => {                                  // ← ici "box" existe (paramètre du forEach)
+    if (box.childElementCount) return;
+    const LINES = box.closest('#about') ? PENTEST : DEFAULT;
+    [...LINES, ...LINES, ...LINES].forEach(({t, v}) => {
+      const el = document.createElement('span');
+      el.className = 'tbl ' + (t === 'g' ? 'g' : 'd');
+      el.textContent = v;
+      box.appendChild(el);                                // ← box, pas c
+    });
   });
 })();
 
