@@ -46,7 +46,9 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{
-  background:var(--bg);color:var(--text);
+  color:var(--text);
+  background:radial-gradient(120% 80% at 50% 0%, #0a1428 0%, #070e1d 40%, #040912 100%) fixed;
+
   font-family:var(--font-sans);font-size:17px;line-height:1.7;
   overflow-x:hidden;transition:background .45s,color .45s;
 }
@@ -473,6 +475,29 @@ body{
 .tech-icon{width:14px;height:14px;object-fit:contain;flex-shrink:0;filter:none;}
 
 /* ── BIOINFORMATICS ──────────────────────── */
+.bio-fold-head{ display:none; }
+.bio-fold[open] .bio-grid{ display:grid; }   /* garde ta grille normale */
+.bio-fold-chev{
+  font-family:var(--font-mono); font-size:1.1rem; line-height:1;
+  color:var(--sky); transition:transform .25s ease;
+}
+.bio-fold[open] .bio-fold-chev{ transform:rotate(45deg); }
+
+@media (max-width:768px){
+  /* mobile : le résumé devient un bandeau cliquable */
+  .bio-fold-head{
+    display:flex; align-items:center; justify-content:space-between;
+    cursor:pointer; list-style:none;
+    padding:14px 16px; border:1px solid var(--border); border-radius:10px;
+    font-family:var(--font-mono); font-size:.82rem; letter-spacing:1px;
+    text-transform:uppercase; color:var(--sky);
+  }
+  .bio-fold-head::-webkit-details-marker{ display:none; }
+  .bio-fold-chev{ transition:transform .25s ease; color:var(--sky); }
+  .bio-fold[open] .bio-fold-chev{ transform:rotate(180deg); }
+  /* replié par défaut sur mobile : on retire le "open" visuel */
+  .bio-grid{ margin-top:12px; }
+}
 .bio-layout{display:grid;grid-template-columns:1fr 2fr;gap:4rem;align-items:start;}
 .bio-title{
   font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;

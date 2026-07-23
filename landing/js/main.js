@@ -292,6 +292,13 @@ function initVideoLightbox() {
   document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 }
 
+/* ── BIO STACK : replié par défaut sur mobile ───────── */
+function initBioFold() {
+  const d = document.querySelector('.bio-fold');
+  if (d && window.matchMedia('(max-width:768px)').matches) {
+    d.removeAttribute('open');
+  }
+}
 
 /* ── BOOT ────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
@@ -303,4 +310,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initReveal();
   typeDevLine();
   typeCodeWindow();
+  initBioFold();
 });
